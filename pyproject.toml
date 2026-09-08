@@ -1,0 +1,19 @@
+[project]
+name = "xmyshell"
+version = "0.1.0"
+description = "XmyShell is a shell-like tool built on top of prompt_toolkit which provides a persistent Python runtime."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "prompt-toolkit>=3.0.53",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["xmyshell*"]
+
+[project.scripts]
+xmyshell = "xmyshell.__main__:main"
+
+[tool.setuptools.package-data]
+"xmyshell" = ["data/*.json"]
