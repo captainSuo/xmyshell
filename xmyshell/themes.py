@@ -121,14 +121,14 @@ THEME_POWERLINE: XmyShellTheme = {
         "<style bg='#729fcf' fg='#2e3436'> {socket.gethostname()} </style>"
         "<style bg='#3465a4' fg='#729fcf'></style>"
         "<style bg='#3465a4' fg='#d3d7cf'> {getcwd().replace(HOME_DIR, '~')} </style>"
-        "<style bg='#2e3436' fg='#3465a4'></style>"
-        "<style bg='#2e3436' fg='#d3d7cf'>"
+        "<style fg='#3465a4'></style>"
+        "<style fg='#d3d7cf'>"
         "{' ✗' if exit_code else ''}"
         " </style>"
         "\n<style fg='#8ae234'>❯</style> "
     ),
     "shell_rprompt": (
-        "<style fg='#d3d7cf'></style>"
+        "<style fg='#3465a4'></style>"
         "<style bg='#3465a4' fg='#d3d7cf'> {datetime.now().strftime('%H:%M')} </style>"
     ),
     "prompt_style": {
