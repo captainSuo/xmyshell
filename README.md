@@ -2,6 +2,27 @@
 
 **`XmyShell`** is a shell-like tool built on top of `prompt_toolkit` which provides a persistent Python runtime. The main process is Python, and shell commands are executed in subprocesses. It provides a persistent Python namespace, inline Python evaluation, and command output capture. It can be useful if you want Python evaluation in a shell or execute shell command conveniently in Python REPL environment.
 
+## Get started
+
+### Installation
+```bash
+pip install xmyshell
+```
+
+### Start
+```bash
+$ xmyshell
+XmyShell 0.1.0
+Initialized with 296ms.
+Username@hostname ➜  ~ 0ms
+❯
+```
+
+### Learn more through `help`.
+```bash
+❯ help
+```
+
 ## Features
 
 ### Command Line Features
@@ -121,12 +142,3 @@ The duration which last command took.
 - **External command overhead** — Each subprocess spawns with minor delays.
 
 **Why?** `XmyShell` is **NOT** a Bash replacement. It's a Python‑native environment for those who want Python's power at the command line.
-
-## Usage
-
-Start `XmyShell` by running the main module. Commands that are not built-in are passed to `/bin/sh` (or the system shell) for execution.
-```bash
-$ xmyshell
-XmyShell 0.1.0
-❯
-```
