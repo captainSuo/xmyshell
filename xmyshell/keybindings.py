@@ -17,7 +17,7 @@ def is_cursor_before_right(buffer, char) -> bool:
 
 def should_completion(buffer) -> bool:
     pos = buffer.cursor_position
-    return pos >= len(buffer.text) or buffer.text[pos].isspace() or buffer.text[pos] in ")]}>"
+    return pos >= len(buffer.text) or buffer.text[pos].isspace() or buffer.text[pos] in ")]}>\"\'"
 
 @bindings.add('(')
 def _(event: KeyPressEvent) -> None:
