@@ -324,11 +324,6 @@ class ShellCompleter(Completer):
             yield from self._python_completion(lstripped)
             return
 
-        last_token = lstripped.split()[-1] if lstripped.split() else ''
-        if '.' in last_token and not last_token.startswith('.'):
-            yield from self._python_completion(lstripped)
-            return
-
         if " " not in lstripped:
             if len(lstripped) < 1:
                 return
@@ -341,7 +336,6 @@ class ShellCompleter(Completer):
                         display=truncate(cmd, MAX_DISPLAY_LEN),
                         display_meta=meta,
                     )
-            return
 
         # special built-ins
         parts = lstripped.split()
