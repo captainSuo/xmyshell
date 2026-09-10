@@ -1,3 +1,4 @@
+from prompt_toolkit.buffer import Buffer
 from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
 from prompt_toolkit.selection import SelectionState
 from prompt_toolkit.keys import Keys
@@ -242,17 +243,18 @@ def _(event: KeyPressEvent) -> None:
 
     buffer.delete_before_cursor()
 
-def on_cursor_position_changed(buffer) -> None:
+def on_cursor_position_changed(buffer: Buffer) -> None:
     global _auto_editing
     if _auto_editing:
+        buffer._previous_text = buffer.text  # type: ignore
         return
 
     if not hasattr(buffer, '_previous_text'):
-        buffer._previous_text = buffer.text
+        buffer._previous_text = buffer.text  # type: ignore
         return
 
-    if buffer.text != buffer._previous_text:
-        buffer._previous_text = buffer.text
+    if buffer.text != buffer._previous_text: # type: ignore
+        buffer._previous_text = buffer.text  # type: ignore
         return
 
     # Any cursor movement without editing will clear the stack
