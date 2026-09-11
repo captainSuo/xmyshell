@@ -1,5 +1,5 @@
 import os
-import runpy
+import sys
 from .environment import load_init_namespace, init_environ
 from .themes import load_theme, THEME_DEFAULT
 from .completer import completer_init
@@ -8,6 +8,9 @@ from .kernel import xmyshell_source
 
 
 def xmyshell_load() -> None:
+    if os.getcwd() not in sys.path:
+        sys.path.insert(0, "")
+
     load_init_namespace()
     completer_init()
     load_theme(THEME_DEFAULT)
