@@ -8,7 +8,7 @@ from .kernel import xmyshell_source
 
 
 def xmyshell_load() -> None:
-    if os.getcwd() not in sys.path:
+    if "" not in sys.path:
         sys.path.insert(0, "")
 
     load_init_namespace()
