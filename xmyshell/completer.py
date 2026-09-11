@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import time
 import json
@@ -349,8 +350,9 @@ class ShellCompleter(Completer):
                 if not lstripped.endswith(parts[-1]):
                     parts.append("")
                 elif len(parts) == 2:
-                    for module in pkgutil.iter_modules():
-                        name: str = module.name
+                    mods = set(sys.builtin_module_names)
+                    mods |= {m.name for m in pkgutil.iter_modules()}
+                    for name in sorted(mods):
                         if not name.startswith(parts[-1]):
                             continue
                         if name.startswith("_"):
@@ -372,8 +374,9 @@ class ShellCompleter(Completer):
                 if not lstripped.endswith(parts[-1]):
                     parts.append("")
                 elif len(parts) == 2:
-                    for module in pkgutil.iter_modules():
-                        name: str = module.name
+                    mods = set(sys.builtin_module_names)
+                    mods |= {m.name for m in pkgutil.iter_modules()}
+                    for name in sorted(mods):
                         if not name.startswith(parts[-1]):
                             continue
                         if name.startswith("_"):
