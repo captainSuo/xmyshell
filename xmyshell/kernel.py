@@ -13,7 +13,11 @@ def _reload() -> None:
 
 
 def xmyshell_source(path: str) -> None:
-    _updated = runpy.run_path(os.path.expanduser(path), namespace)
+    _updated = runpy.run_path(
+        path_name=os.path.expanduser(path),
+        init_globals=namespace,
+        run_name="__main__",
+    )
     namespace.clear()
     namespace.update(_updated)
 
