@@ -140,6 +140,22 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
             pyerror(f"{type(e).__name__}: {e}")
             return -1
 
+def _fix_first_word(cmd_line: str) -> str:
+    # strip is unnecessary
+    if cmd_line.startswith('"'):
+        end = cmd_line.find('"', 1)
+        if end == -1:
+            return cmd_line
+        first = cmd_line[:end + 1]
+        rest = cmd_line[end + 1:]
+    else:
+        parts = cmd_line.split(None, 1)
+        first = parts[0]
+        rest = (" " + parts[1]) if len(parts) > 1 else ""
+
+    fixed = first.replace("/", "\\")
+    return fixed + rest
+
 
 def xmyshell(cmd_line: str) -> int:
     cmd_line = cmd_line.strip()
@@ -254,6 +270,8 @@ def xmyshell(cmd_line: str) -> int:
         case "exit":
             sys.exit(0)
 
+    if os.name == "nt":
+        cmd_line = _fix_first_word(cmd_line)
     if target_var:
         result = subprocess.run(
             cmd_line, shell=True, env=os.environ, capture_output=True, text=True
