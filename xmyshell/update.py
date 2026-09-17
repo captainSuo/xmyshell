@@ -19,7 +19,10 @@ def xmyshell_update(version: str | None = None) -> None:
         "--upgrade",
         "xmyshell" + (f"=={version}" if version else ""),
     ]
-    sys.exit(subprocess.run(install_args).returncode)
+    print()
+    returncode = subprocess.run(install_args).returncode
+    print("Press <Enter> to continue ...", end="")
+    sys.exit(returncode)
 
 if __name__ == "__main__":
     version = sys.argv[1] if len(sys.argv) >= 2 else None
