@@ -86,7 +86,7 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
     command = args[0]
     match command:
         case "pyexec":
-            code = cmd_line[len(command):].strip()
+            code = cmd_line[len(command) :].strip()
             if not code:
                 pyerror("pyexec: missing code")
                 return -1
@@ -96,6 +96,7 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
                 return 0
             except Exception as e:
                 import traceback
+
                 namespace["last_error"] = e
                 namespace["last_traceback"] = traceback.format_exc()
                 pyerror(f"{type(e).__name__}: {e}")
@@ -131,6 +132,13 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
         case "reload":
             _reload()
             return 0
+
+        case "update":
+            from .update import xmyshell_update
+            subprocess.run(
+                [sys.executable, "-m", "xmyshell.update"]
+                + (args[1:] if len(args) > 1 else [])
+            )
 
     if command.startswith("import") or command.startswith("from"):
         try:
