@@ -17,18 +17,19 @@ HELP_MESSAGE    = f"""\033[1;36m
 {WELCOME_MESSAGE}
 
 Built-in Commands:
-  help                        Show helping documents.
-  print <expr>                Evaluate and print a Python expression.
-  pyexec <stmt>               Execute a Python statement (e.g. pyexec x = 1).
-  source <file.py>            Run a Python script in the current namespace.
-  export NAME=VALUE           Set an environment variable (supports {{expr}}).
-  import <module> [as <alt>]  Import a Python module.
-  from <module> import *      Import names from a module.
-  reload                      Reload environment (e.g. exit virtualenv).
-  cd <dir>                    Change directory (supports {{expr}}).
-  pwd                         Print working directory.
-  clear                       Clear the terminal screen.
-  exit                        Exit XmyShell.
+  help                          Show help documents.
+  print <expr>                  Evaluate and print a Python expression.
+  pyexec <stmt>                 Execute a Python statement (e.g. pyexec x = 1).
+  source <file.py>              Run a Python script in the current namespace.
+  export <NAME>=<value>         Set an environment variable (supports {{expr}}).
+  import <module> [as <alt>]    Import a Python module.
+  from <module> import <names>  Import names from a module.
+  reload                        Reload environment (e.g. exit virtualenv).
+  update [<version>]            Update xmyshell (optionally to a specific version).
+  cd <dir>                      Change directory (supports {{expr}}).
+  pwd                           Print working directory.
+  clear                         Clear the terminal screen.
+  exit                          Exit XmyShell.
 
 Inline Python:
   Use {{expression}} anywhere in a command to expand its result.

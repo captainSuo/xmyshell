@@ -93,6 +93,15 @@ foobar
 ❯ reload
 ```
 
+- Update xmyshell (optionally to a specific version).
+```
+❯ udpate
+```
+or
+```
+❯ update 0.1.3
+```
+
 - Syntax highlighting via `prompt_toolkit`
 - Powerful auto-completion, history search, and automatic bracket/quote pairing
 - Startup configuration: `~/.xmyshell/config.py` loaded at launch
