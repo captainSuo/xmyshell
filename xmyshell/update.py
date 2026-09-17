@@ -7,7 +7,7 @@ def xmyshell_update(version: str | None = None) -> None:
     if os.name == "nt":
         subprocess.run("taskkill /F /IM xmyshell.exe", shell=True)
     else:
-        subprocess.run(["pkill", "-f", "xmyshell"])
+        subprocess.run(["pkill", "-f", "-x", "xmyshell"])
 
     time.sleep(1)
 
