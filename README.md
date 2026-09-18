@@ -102,6 +102,11 @@ or
 ❯ update 0.1.3
 ```
 
+- Alias
+```
+❯ alias ll='ls -lh'
+```
+
 - Syntax highlighting via `prompt_toolkit`
 - Powerful auto-completion, history search, and automatic bracket/quote pairing
 - Startup configuration: `~/.xmyshell/config.py` loaded at launch
@@ -121,12 +126,25 @@ Returns the parent directory of a path.
 - `basename(path)`
 Returns the final component of a path.
 
+- `cat(file)`
+Shortcut for `open(file).read()`.
+
+- `alias(altname, target)`
+Same as the command.
+
+
 ### Reserved global varibles
 - `exit_code`
 The exit code of the last command.
 
 - `exec_duration`
 The duration which last command took.
+
+- `HOME_DIR`
+The home directory, similar to `~`.
+
+- `PROFILE`
+The path of config file.
 
 ### Keyboard Shortcuts
 - `↑↓` -> Navigate through command history.

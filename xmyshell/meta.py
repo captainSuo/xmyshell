@@ -29,6 +29,7 @@ Built-in Commands:
   cd <dir>                      Change directory (supports {{expr}}).
   pwd                           Print working directory.
   clear                         Clear the terminal screen.
+  alias altname=<cmd>           Create an alias command.
   exit                          Exit XmyShell.
 
 Inline Python:
@@ -44,10 +45,18 @@ IO:
   Example: print "\\n".join(str(i) for i in range(100)) |> grep 42
 
 Helper Functions:
-  getlogin()   -  current username
-  getcwd()     -  current working directory
-  dirname(p)   -  parent directory of path
-  basename(p)  -  final component of path
+  getlogin()          -  current username
+  getcwd()            -  current working directory
+  dirname(p)          -  parent directory of path
+  basename(p)         -  final component of path
+  cat(file)           -  Shortcut for open(file).read().
+  alias(altname, cmd) -  Same as the command.
+
+Built-in variables:
+  exit_code       -  The exit code of the last command.
+  exec_duration   -  The duration which last command took.
+  HOME_DIR        -  The home directory, similar to "~".
+  PROFILE         -  The path of config file.
 
 Keyboard Shortcuts:
   ↑↓      -  Navigate through command history.

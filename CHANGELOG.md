@@ -1,6 +1,20 @@
 # Change Log
 
 
+## [0.2.0] 2026-09-17 Bug fixs & New Features
+### Fixed
+- Fix update
+
+### Improved
+- Automaticlly unpack Sequence objects in expansion.
+
+### Added
+- Built-in `cat(f)` function as a shortcut for `open(f).read()`.
+- Built-in `alias(altname, target)` function, same as `alias` command.
+- Built-in `PROFILE` variable as a shortcut to the path of config file.
+- `alias` command for command aliases. eg. `alias ll='ls -l'`
+
+
 ## [0.1.4] 2026-09-17 Bug fixs & Features
 ### Fixed
 - Fix update on Linux
