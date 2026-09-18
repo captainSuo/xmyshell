@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 from typing import Any
 from collections.abc import Mapping
-from .utils import XMYSHELL_MAGIC, getcwd, getlogin, HOME_DIR
+from .utils import XMYSHELL_MAGIC, getcwd, getlogin, HOME_DIR, xmyshell_cat
 
 namespace: dict[str, Any] = {}
 init_environ: dict[str, str] = dict(os.environ)
@@ -23,6 +23,7 @@ _init_namespace: dict[str, Any] = {
     "getcwd": getcwd,
     "dirname": os.path.dirname,
     "basename": os.path.basename,
+    "cat": xmyshell_cat,
     "HOME_DIR": HOME_DIR,
     "exit_code": 0,
     "exec_duration": 0,

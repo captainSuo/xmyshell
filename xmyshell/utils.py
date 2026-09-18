@@ -33,3 +33,8 @@ def getcwd() -> str:
         return os.getcwd()
 
 HOME_DIR = os.path.expanduser("~").replace('\\', '/')
+
+def xmyshell_cat(file_path: str) -> str:
+    file_path = os.path.expanduser(file_path)
+    with open(file_path, "r") as f:
+        return f.read()
