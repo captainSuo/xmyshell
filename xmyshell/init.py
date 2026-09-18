@@ -1,6 +1,6 @@
 import os
 import sys
-from .environment import load_init_namespace, init_environ
+from .environment import load_init_namespace, init_environ, aliases
 from .themes import load_theme, THEME_DEFAULT
 from .completer import completer_init
 from .utils import pywarning
@@ -34,4 +34,5 @@ def xmyshell_init() -> None:
 def xmyshell_reload() -> None:
     os.environ.clear()
     os.environ.update(init_environ)
+    aliases.clear()
     xmyshell_load()
