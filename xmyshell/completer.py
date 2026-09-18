@@ -16,7 +16,8 @@ MAX_DISPLAY_LEN = 24
 MAX_META_LEN = 12
 
 BUILTINS = ("cd", "cp", "cat", "echo", "exit", "import", "ls", "print", "pyexec", "pwd", "source",
-            "clear", "grep", "find", "from", "mkdir", "rm", "reload", "mv", "help", "alias", "update")
+            "clear", "grep", "find", "from", "mkdir", "rm", "reload", "mv", "help",
+            "update", "alias", "unalias")
 
 COMMON = (
     "python", "python3", "pip", "pip3", "git", "conda", "uv",
