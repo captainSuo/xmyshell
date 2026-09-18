@@ -154,12 +154,11 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
             return 0
 
         case "update":
-            from .update import xmyshell_update
-            subprocess.run(
+            returncode = subprocess.run(
                 [sys.executable, "-m", "xmyshell.update"]
                 + (args[1:] if len(args) > 1 else [])
-            )
-            return 0
+            ).returncode
+            return returncode
 
         case "help":
             print(HELP_MESSAGE)
