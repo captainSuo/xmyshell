@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 import os
 import sys
 import runpy
@@ -52,6 +53,8 @@ def pyeval(cmd_line: str) -> str:
                 if expr:
                     try:
                         val = eval(expr, dict(os.environ), namespace)
+                        if not isinstance(val, str) and isinstance(val, Sequence):
+                            val = " ".join(str(ele) for ele in val)
                         result.append(str(val) if val is not None else '')
                     except Exception as e:
                         pywarning(f"An error occured when unfolding {expr!r}, using original string instead"
