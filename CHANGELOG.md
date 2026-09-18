@@ -1,6 +1,11 @@
 # Change Log
 
 
+## [0.2.3] 2026-09-18 Bug fixs
+### Fixed
+- Remove all aliases when reload.
+
+
 ## [0.2.2] 2026-09-18 Bug fixs
 ### Fixed
 - Completer now completes `unalias`.
