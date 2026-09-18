@@ -4,7 +4,7 @@ import sys
 import runpy
 import subprocess
 import shlex
-from .environment import namespace, aliases
+from .environment import namespace, aliases, xmyshell_alias, xmyshell_unalias
 from .utils import pywarning, pyerror, getcwd
 from .meta import HELP_MESSAGE
 
@@ -128,13 +128,21 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
                 pyerror("export: missing code")
                 return -1
             try:
-                alias_source, alias_target = code.split('=', 1)
-                alias_source = alias_source.strip()
-                aliases[alias_source] = eval(alias_target, namespace, {})
+                altname, alias_target = code.split('=', 1)
+                altname = altname.strip()
+                xmyshell_alias(altname, eval(alias_target, namespace, {}))
                 return 0
             except Exception as e:
                 pyerror(f"{type(e).__name__}: {e}")
                 return -1
+
+        case "unalias":
+            name: str = cmd_line[len(command):].strip()
+            if not name:
+                pyerror("export: missing name")
+                return -1
+            xmyshell_unalias(name)
+            return 0
 
         case "print":
             expr = cmd_line[len(command):].strip()

@@ -11,8 +11,12 @@ namespace: dict[str, Any] = {}
 aliases: dict[str, str] = {}
 init_environ: dict[str, str] = dict(os.environ)
 
-def xmyshell_alias(source: str, target: str) -> None:
-    aliases.update({source: target})
+
+def xmyshell_alias(altname: str, target: str) -> None:
+    aliases.update({altname: target})
+
+def xmyshell_unalias(altname: str) -> None:
+    aliases.pop(altname)
 
 
 _init_namespace: dict[str, Any] = {
@@ -29,6 +33,7 @@ _init_namespace: dict[str, Any] = {
     "basename": os.path.basename,
     "cat": xmyshell_cat,
     "alias": xmyshell_alias,
+    "unalias": xmyshell_unalias,
     "HOME_DIR": HOME_DIR,
     "PROFILE": f"{HOME_DIR}/.xmyshell/config.py",
     "exit_code": 0,
