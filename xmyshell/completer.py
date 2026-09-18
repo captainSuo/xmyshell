@@ -313,6 +313,28 @@ class ShellCompleter(Completer):
                     display_meta="flag",
                 )
 
+    def _command_completion(self, text):
+        for cmd in self._get_commands():
+            if cmd in aliases: continue
+            if cmd.startswith(text):
+                meta = "command" if cmd in BUILTINS else "program"
+                yield Completion(
+                    cmd,
+                    start_position=-len(text),
+                    display=truncate(cmd, MAX_DISPLAY_LEN),
+                    display_meta=meta,
+                )
+
+    def _alias_completion(self, text):
+        for alias in aliases.keys():
+            if alias.startswith(text):
+                yield Completion(
+                    alias,
+                    start_position=-len(text),
+                    display=truncate(alias, MAX_DISPLAY_LEN),
+                    display_meta="alias",
+                )
+
     def get_completions(self, document: Document, complete_event):
         text = document.text_before_cursor
         if "=>" in text: return
@@ -329,24 +351,8 @@ class ShellCompleter(Completer):
         if " " not in lstripped:
             if len(lstripped) < 1:
                 return
-            for alias in aliases.keys():
-                if alias.startswith(lstripped):
-                    yield Completion(
-                        alias,
-                        start_position=-len(lstripped),
-                        display=truncate(alias, MAX_DISPLAY_LEN),
-                        display_meta="alias",
-                    )
-            for cmd in self._get_commands():
-                if cmd in aliases: return
-                if cmd.startswith(lstripped):
-                    meta = "command" if cmd in BUILTINS else "program"
-                    yield Completion(
-                        cmd,
-                        start_position=-len(lstripped),
-                        display=truncate(cmd, MAX_DISPLAY_LEN),
-                        display_meta=meta,
-                    )
+            yield from self._alias_completion(lstripped)
+            yield from self._command_completion(lstripped)
 
         # special built-ins
         parts = lstripped.split()
@@ -356,6 +362,9 @@ class ShellCompleter(Completer):
                 param_text = lstripped[len(cmd):].lstrip()
                 yield from self._python_completion(param_text)
                 return
+            if cmd == "unalias":
+                param_text = lstripped[len(cmd):].lstrip()
+                yield from self._alias_completion(param_text)
             if cmd == "from":
                 if not lstripped.endswith(parts[-1]):
                     parts.append("")
