@@ -1,7 +1,12 @@
 # Change Log
 
 
-## [0.2.0] 2026-09-18 New Features
+## [0.2.2] 2026-09-18 Bug fixs
+### Fixed
+- Completer now completes `unalias`.
+
+
+## [0.2.1] 2026-09-18 New Features
 ### Added
 - `unalias` command and function.
 - Alias completer.
