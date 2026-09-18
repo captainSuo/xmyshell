@@ -30,6 +30,7 @@ Built-in Commands:
   pwd                           Print working directory.
   clear                         Clear the terminal screen.
   alias altname=<cmd>           Create an alias command.
+  unalias altname               Remove an alias command.
   exit                          Exit XmyShell.
 
 Inline Python:
@@ -51,6 +52,7 @@ Helper Functions:
   basename(p)         -  final component of path
   cat(file)           -  Shortcut for open(file).read().
   alias(altname, cmd) -  Same as the command.
+  unalias(altname) -  Same as the command.
 
 Built-in variables:
   exit_code       -  The exit code of the last command.

@@ -105,6 +105,7 @@ or
 - Alias
 ```
 ❯ alias ll='ls -lh'
+❯ unalias ll
 ```
 
 - Syntax highlighting via `prompt_toolkit`
@@ -130,6 +131,9 @@ Returns the final component of a path.
 Shortcut for `open(file).read()`.
 
 - `alias(altname, target)`
+Same as the command.
+
+- `unalias(altname)`
 Same as the command.
 
 
