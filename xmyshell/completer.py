@@ -8,7 +8,7 @@ import pkgutil
 from string import whitespace
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
-from .environment import namespace
+from .environment import namespace, aliases
 from .utils import truncate
 from pathlib import Path
 
@@ -328,7 +328,16 @@ class ShellCompleter(Completer):
         if " " not in lstripped:
             if len(lstripped) < 1:
                 return
+            for alias in aliases.keys():
+                if alias.startswith(lstripped):
+                    yield Completion(
+                        alias,
+                        start_position=-len(lstripped),
+                        display=truncate(alias, MAX_DISPLAY_LEN),
+                        display_meta="alias",
+                    )
             for cmd in self._get_commands():
+                if cmd in aliases: return
                 if cmd.startswith(lstripped):
                     meta = "command" if cmd in BUILTINS else "program"
                     yield Completion(
