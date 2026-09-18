@@ -139,6 +139,7 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
                 [sys.executable, "-m", "xmyshell.update"]
                 + (args[1:] if len(args) > 1 else [])
             )
+            return 0
 
     if command.startswith("import") or command.startswith("from"):
         try:
