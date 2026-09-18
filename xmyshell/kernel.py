@@ -1,8 +1,9 @@
-from collections.abc import Sequence
+from collections.abc import Generator, Sequence
 import os
 import sys
 import runpy
 import subprocess
+import shlex
 from .environment import namespace
 from .utils import pywarning, pyerror, getcwd
 from .meta import HELP_MESSAGE
@@ -53,8 +54,10 @@ def pyeval(cmd_line: str) -> str:
                 if expr:
                     try:
                         val = eval(expr, dict(os.environ), namespace)
-                        if not isinstance(val, str) and isinstance(val, Sequence):
-                            val = " ".join(str(ele) for ele in val)
+                        if not isinstance(
+                            val, (str, bytes, bytearray, memoryview)
+                        ) and isinstance(val, (Sequence, Generator)):
+                            val = shlex.join(str(ele) for ele in val)
                         result.append(str(val) if val is not None else '')
                     except Exception as e:
                         pywarning(f"An error occured when unfolding {expr!r}, using original string instead"
