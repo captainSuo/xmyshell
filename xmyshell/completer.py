@@ -16,7 +16,7 @@ MAX_DISPLAY_LEN = 24
 MAX_META_LEN = 12
 
 BUILTINS = ("cd", "cp", "cat", "echo", "exit", "import", "ls", "print", "pyexec", "pwd", "source",
-            "clear", "grep", "find", "from", "mkdir", "rm", "reload", "mv", "help")
+            "clear", "grep", "find", "from", "mkdir", "rm", "reload", "mv", "help", "alias", "update")
 
 COMMON = (
     "python", "python3", "pip", "pip3", "git", "conda", "uv",
@@ -342,7 +342,7 @@ class ShellCompleter(Completer):
         parts = lstripped.split()
         if len(parts) >= 1:
             cmd = parts[0]
-            if cmd in ("print", "pyexec"):
+            if cmd in ("print", "pyexec", "alias"):
                 param_text = lstripped[len(cmd):].lstrip()
                 yield from self._python_completion(param_text)
                 return

@@ -1,5 +1,5 @@
 {
-  "xmyshell": { "_global": ["--help", "--version"] },
+  "xmyshell": { "_global": ["--help", "--version", "--update"] },
   "git": {
     "_global": ["--help", "--version"],
     "add": {

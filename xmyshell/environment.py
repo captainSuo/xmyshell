@@ -8,6 +8,7 @@ from collections.abc import Mapping
 from .utils import XMYSHELL_MAGIC, getcwd, getlogin, HOME_DIR, xmyshell_cat
 
 namespace: dict[str, Any] = {}
+aliases: dict[str, str] = {}
 init_environ: dict[str, str] = dict(os.environ)
 
 

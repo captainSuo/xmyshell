@@ -4,7 +4,7 @@ import sys
 import runpy
 import subprocess
 import shlex
-from .environment import namespace
+from .environment import namespace, aliases
 from .utils import pywarning, pyerror, getcwd
 from .meta import HELP_MESSAGE
 
@@ -122,6 +122,20 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
                 pyerror(f"{type(e).__name__}: {e}")
                 return -1
 
+        case "alias":
+            code: str = cmd_line[len(command):].strip()
+            if not code:
+                pyerror("export: missing code")
+                return -1
+            try:
+                alias_source, alias_target = code.split('=', 1)
+                alias_source = alias_source.strip()
+                aliases[alias_source] = eval(alias_target, namespace, {})
+                return 0
+            except Exception as e:
+                pyerror(f"{type(e).__name__}: {e}")
+                return -1
+
         case "print":
             expr = cmd_line[len(command):].strip()
             if not expr:
@@ -146,6 +160,21 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
                 + (args[1:] if len(args) > 1 else [])
             )
             return 0
+
+        case "help":
+            print(HELP_MESSAGE)
+            return 0
+
+        case "clear":
+            print("\033[2J\033[H", end="")
+            return 0
+
+        case "pwd":
+            print(getcwd())
+            return 0
+
+        case "exit":
+            sys.exit(0)
 
     if command.startswith("import") or command.startswith("from"):
         try:
@@ -233,6 +262,9 @@ def xmyshell(cmd_line: str) -> int:
         return 0
 
     args = cmd_line.split()
+    args[0] = aliases.get(args[0], args[0])
+    cmd_line = " ".join(args)
+    args = cmd_line.split()
     command = args[0]
 
     match command:
@@ -259,14 +291,6 @@ def xmyshell(cmd_line: str) -> int:
                 pyerror(f"not a directory: '{target_dir}'")
                 return -1
 
-        case "help":
-            print(HELP_MESSAGE)
-            return 0
-
-        case "clear":
-            print("\033[2J\033[H", end="")
-            return 0
-
         case "source":
             if len(args) < 2:
                 pyerror("source: missing script")
@@ -277,13 +301,6 @@ def xmyshell(cmd_line: str) -> int:
             except Exception as e:
                 pyerror(f"source error: {e}")
                 return -1
-
-        case "pwd":
-            print(getcwd())
-            return 0
-
-        case "exit":
-            sys.exit(0)
 
     if os.name == "nt":
         cmd_line = _fix_first_word(cmd_line)
