@@ -13,10 +13,10 @@ init_environ: dict[str, str] = dict(os.environ)
 
 
 def xmyshell_alias(altname: str, target: str) -> None:
-    aliases.update({altname: target})
+    aliases.update({str(altname): str(target)})
 
 def xmyshell_unalias(altname: str) -> None:
-    aliases.pop(altname)
+    aliases.pop(altname, None)
 
 
 _init_namespace: dict[str, Any] = {
