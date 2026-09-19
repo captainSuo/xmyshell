@@ -1,6 +1,12 @@
 # Change Log
 
 
+## [0.2.7] 2026-09-19 Improvement
+### Improved
+- Also complete when there is only one match.
+- Complete path in Python strings.
+
+
 ## [0.2.6] 2026-09-19 New Feature
 ### Added
 - Undo and redo.
