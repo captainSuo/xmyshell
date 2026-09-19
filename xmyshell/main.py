@@ -8,7 +8,7 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from .meta import WELCOME_MESSAGE
 from .environment import namespace
-from .keybindings import bindings, on_cursor_position_changed
+from .keybindings import bindings, on_cursor_position_changed, on_text_changed, clean_buffer
 from .init import xmyshell_init
 from .kernel import pyeval, xmyshell
 from .lexer import XmyShellLexer
@@ -29,6 +29,7 @@ def xmyshell_main() -> None:
         lexer=XmyShellLexer(),
     )
     session.default_buffer.on_cursor_position_changed += on_cursor_position_changed
+    session.default_buffer.on_text_changed += on_text_changed
 
     try:
         while True:
@@ -43,6 +44,7 @@ def xmyshell_main() -> None:
                 start_time = time_ns()
                 namespace["exit_code"] = xmyshell(cmd_line)
                 namespace["exec_duration"] = time_ns() - start_time
+                clean_buffer()
             except KeyboardInterrupt:
                 print("Ctrl-C")
             except EOFError:
