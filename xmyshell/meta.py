@@ -64,4 +64,6 @@ Keyboard Shortcuts:
   ↑↓      -  Navigate through command history.
   →       -  Apply selected history entry to the prompt.
   Ctrl+R  -  Reverse incremental searching (history).
+  Ctrl+Z  -  Undo.
+  Ctrl+Y  -  Redo.
   Ctrl+D  -  Exit XmyShell."""

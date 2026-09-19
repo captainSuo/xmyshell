@@ -1,6 +1,6 @@
 [project]
 name = "xmyshell"
-version = "0.2.5"
+version = "0.2.6"
 description = "XmyShell is a shell-like tool built on top of prompt_toolkit which provides a persistent Python runtime."
 readme = "README.md"
 requires-python = ">=3.12"

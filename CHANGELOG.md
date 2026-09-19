@@ -1,6 +1,11 @@
 # Change Log
 
 
+## [0.2.6] 2026-09-19 New Feature
+### Added
+- Undo and redo.
+
+
 ## [0.2.5] 2026-09-19 Improvement
 ### Improved
 - Replace '\n' with space when expanding expressions.
