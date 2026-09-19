@@ -425,7 +425,13 @@ class ShellCompleter(Completer):
             # filter (which hides completions identical to the replaced text) and
             # doubles as the shell argument separator. Invisible characters would
             # also bypass the filter, but would corrupt command parsing.
-            completions[0].text = completions[0].text + " "
+            completion = completions[0]
+            text_before_cursor = document.text_before_cursor
+            replaced_text = text_before_cursor[
+                len(text_before_cursor) + completion.start_position :
+            ]
+            if replaced_text == completion.text:
+                completion.text = completion.text + " "
         return completions
 
 def completer_init() -> None:
