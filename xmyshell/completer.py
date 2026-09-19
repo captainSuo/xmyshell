@@ -1,3 +1,4 @@
+from collections.abc import Generator, Iterable
 import os
 import sys
 import re
@@ -6,7 +7,7 @@ import json
 import keyword
 import pkgutil
 from string import whitespace
-from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from prompt_toolkit.document import Document
 from .environment import namespace, aliases
 from .utils import truncate
@@ -335,7 +336,7 @@ class ShellCompleter(Completer):
                     display_meta="alias",
                 )
 
-    def get_completions(self, document: Document, complete_event):
+    def _get_completions(self, document: Document, complete_event) -> Generator[Completion, None, None]:
         text = document.text_before_cursor
         if "=>" in text: return
         segments = re.split(r'\|>|\|', text)
@@ -416,6 +417,16 @@ class ShellCompleter(Completer):
 
         yield from self._subcommand_completion(lstripped)
         yield from self._path_completions(lstripped)
+
+    def get_completions(self, document: Document, complete_event: CompleteEvent) -> list[Completion]:
+        completions: list[Completion] = list(self._get_completions(document, complete_event))
+        if len(completions) == 1:
+            # Trailing space bypasses prompt_toolkit's `completion_does_nothing`
+            # filter (which hides completions identical to the replaced text) and
+            # doubles as the shell argument separator. Invisible characters would
+            # also bypass the filter, but would corrupt command parsing.
+            completions[0].text = completions[0].text + " "
+        return completions
 
 def completer_init() -> None:
     namespace["shell_completer"] = ShellCompleter()
