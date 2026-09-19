@@ -58,7 +58,7 @@ def pyeval(cmd_line: str) -> str:
                             val, (str, bytes, bytearray, memoryview)
                         ) and isinstance(val, (Sequence, Generator)):
                             val = shlex.join(str(ele) for ele in val)
-                        result.append(str(val) if val is not None else '')
+                        result.append(str(val).replace("\n", " ") if val is not None else '')
                     except Exception as e:
                         pywarning(f"An error occured when unfolding {expr!r}, using original string instead"
                                   f"\n{type(e).__name__}: {e}")
