@@ -1,6 +1,11 @@
 # Change Log
 
 
+## [0.2.5] 2026-09-19 Improvement
+### Improved
+- Replace '\n' with space when expanding expressions.
+
+
 ## [0.2.4] 2026-09-18 Bug fixs
 ### Fixed
 - Fix `alias` and `unalias`.
