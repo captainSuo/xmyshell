@@ -1,6 +1,11 @@
 # Change Log
 
 
+## [0.2.8] 2026-09-19 Improvement
+### Improved
+- Sort path completions.
+
+
 ## [0.2.7] 2026-09-19 Improvement
 ### Improved
 - Also complete when there is only one match.
