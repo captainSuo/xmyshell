@@ -134,7 +134,7 @@ class ShellCompleter(Completer):
                     if len(matches) >= max_results:
                         break
 
-            for item in matches:
+            for item in sorted(matches):
                 full = os.path.join(dirname, item)
                 is_dir = os.path.isdir(full)
                 name = item + ("/" if is_dir else "")
