@@ -172,6 +172,44 @@ class ShellCompleter(Completer):
                 )
 
     def _python_completion(self, text: str):
+
+        def _in_string(text: str) -> str | None:
+            i, n = 0, len(text)
+            quote = ''
+            content_start = 0
+
+            while i < n:
+                c = text[i]
+                if not quote:
+                    if c in ('"', "'"):
+                        if text[i:i+3] in ('"""', "'''"):
+                            quote = text[i:i+3]
+                            i += 3
+                        else:
+                            quote = c
+                            i += 1
+                        content_start = i
+                        continue
+                    i += 1
+                else:
+                    if c == '\\':
+                        i += 2
+                        continue
+                    if text.startswith(quote, i):
+                        i += len(quote)
+                        quote = ''
+                        continue
+                    i += 1
+
+            if not quote:
+                return None
+            return text[content_start:]
+
+        string = _in_string(text)
+        if string:
+            yield from self._path_completions(string)
+            return
+
         if text and text[-1].isspace():
             return
         last_token = text.split()[-1] if text.split() else ''
