@@ -16,7 +16,7 @@ class BufferInfo:
         return BufferInfo(buffer.text, buffer.cursor_position)
 
 
-MAX_HISTORY_ENTRY = 100
+MAX_UNDO_LIST_LEN = 100
 UNDO_MERGE_TIMEOUT = 0.5
 bindings = KeyBindings()
 _auto_editing: bool = False
@@ -35,6 +35,8 @@ def on_text_changed(buffer: Buffer) -> None:
         _redo_list.clear()
         if not _should_merge(buffer):
             _undo_list.append(_last_info)
+        while len(_undo_list) > MAX_UNDO_LIST_LEN:
+            del _undo_list[0]
         _last_info = BufferInfo.from_buffer(buffer)
 
 
