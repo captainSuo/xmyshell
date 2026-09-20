@@ -1,6 +1,12 @@
 # Change Log
 
 
+## [0.2.11] 2026-09-20 Features
+### Added
+- Add stubs file for xmyshell runtime.
+- Add traceback infomation for `print` command.
+
+
 ## [0.2.10] 2026-09-20 Fix
 ### Fixed
 - "Block SIGINT in the parent while the child runs" now works properly.

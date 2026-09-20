@@ -108,6 +108,15 @@ or
 ❯ unalias ll
 ```
 
+- Lists, tuples, generators, etc. will be expanded into shell arguments.
+E.g. `{["arg1", "arg2 xxx"]}` will be expanded into `arg1 'arg2 xxx'`
+
+Here is an example (though there are other ways to do this, it is just an example )
+```
+❯ pip install {cat("requirements.txt").splitlines()}
+```
+
+
 - Syntax highlighting via `prompt_toolkit`
 - Powerful auto-completion, history search, and automatic bracket/quote pairing
 - Startup configuration: `~/.xmyshell/config.py` loaded at launch
@@ -158,6 +167,15 @@ The path of config file.
 - `Ctrl+Y` -> Redo.
 - `Ctrl+D` -> Exit XmyShell.
 - Auto bracket/parenthesis/quote pairing
+
+
+### Stubs
+
+You can write your xmyshell script with these imports:
+```python
+from xmyshell.themes import ... # themes
+from xmyshell.stubs import ...  # stubs for built-in names
+```
 
 
 ## Limitations
