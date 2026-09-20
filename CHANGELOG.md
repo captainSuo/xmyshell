@@ -1,6 +1,11 @@
 # Change Log
 
 
+## [0.2.9] 2026-09-20 Improvement
+### Improved
+- Block SIGINT in the parent while the child runs.
+
+
 ## [0.2.8] 2026-09-19 Improvement
 ### Improved
 - Sort path completions.
