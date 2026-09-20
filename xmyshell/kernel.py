@@ -176,8 +176,13 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
             try:
                 result = eval(expr, dict(os.environ), namespace)
                 print(result)
+                namespace["last_error"] = None
                 return 0
             except Exception as e:
+                import traceback
+
+                namespace["last_error"] = e
+                namespace["last_traceback"] = traceback.format_exc()
                 pyerror(f"{type(e).__name__}: {e}")
                 return -1
 
