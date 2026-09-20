@@ -3,6 +3,7 @@ import os
 import sys
 import runpy
 import subprocess
+import signal
 import shlex
 from .environment import namespace, aliases, xmyshell_alias, xmyshell_unalias
 from .utils import pywarning, pyerror, getcwd
@@ -12,6 +13,24 @@ def _reload() -> None:
     # lazy import
     from .init import xmyshell_reload
     xmyshell_reload()
+
+
+def _run(*args, **kwargs) -> subprocess.CompletedProcess:
+    # Block SIGINT in the parent while the child runs, so that a Ctrl-C
+    # delivered to the console/process group is handled solely by the child.
+    #
+    # Without this, subprocess.run() would catch the KeyboardInterrupt
+    # raised in the parent, wait briefly, and then send SIGKILL to the
+    # child -- which is not what a shell should do. Here the parent stays
+    # silent, the child receives SIGINT as usual, and the caller's
+    # KeyboardInterrupt handler only fires for Ctrl-C at the prompt.
+    #
+    # Must run on the main thread: signal.signal() is not allowed elsewhere.
+    old = signal.signal(signal.SIGINT, signal.SIG_IGN)
+    try:
+        return subprocess.run(*args, **kwargs)
+    finally:
+        signal.signal(signal.SIGINT, old)
 
 
 def xmyshell_source(path: str) -> None:
@@ -162,7 +181,7 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
             return 0
 
         case "update":
-            returncode = subprocess.run(
+            returncode = _run(
                 [sys.executable, "-m", "xmyshell.update"]
                 + (args[1:] if len(args) > 1 else [])
             ).returncode
@@ -312,11 +331,11 @@ def xmyshell(cmd_line: str) -> int:
     if os.name == "nt":
         cmd_line = _fix_first_word(cmd_line)
     if target_var:
-        result = subprocess.run(
+        result = _run(
             cmd_line, shell=True, env=os.environ, capture_output=True, text=True
         )
         namespace[target_var] = result.stdout
     else:
-        result = subprocess.run(cmd_line, shell=True, env=os.environ)
+        result = _run(cmd_line, shell=True, env=os.environ)
 
     return result.returncode
