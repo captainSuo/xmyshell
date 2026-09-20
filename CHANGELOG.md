@@ -1,6 +1,11 @@
 # Change Log
 
 
+## [0.2.10] 2026-09-20 Fix
+### Fixed
+- "Block SIGINT in the parent while the child runs" now works properly.
+
+
 ## [0.2.9] 2026-09-20 Improvement
 ### Improved
 - Block SIGINT in the parent while the child runs.
