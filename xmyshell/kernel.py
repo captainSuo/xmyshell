@@ -26,9 +26,14 @@ def _run(*args, **kwargs) -> subprocess.CompletedProcess:
     # KeyboardInterrupt handler only fires for Ctrl-C at the prompt.
     #
     # Must run on the main thread: signal.signal() is not allowed elsewhere.
+    kwargs_preexec = {}
+    if os.name == "posix":
+        def _reset_sigint():
+            signal.signal(signal.SIGINT, signal.SIG_DFL)
+        kwargs_preexec["preexec_fn"] = _reset_sigint
     old = signal.signal(signal.SIGINT, signal.SIG_IGN)
     try:
-        return subprocess.run(*args, **kwargs)
+        return subprocess.run(*args, **kwargs_preexec, **kwargs)
     finally:
         signal.signal(signal.SIGINT, old)
 
