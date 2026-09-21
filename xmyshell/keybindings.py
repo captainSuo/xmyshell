@@ -200,15 +200,12 @@ def _(event: KeyPressEvent) -> None:
         stack.pop()
         _auto_editing = False
         return
-    if should_completion(buffer) and (
-        len(buffer.text) > 0
-        and buffer.cursor_position > 0
-        and (
-            buffer.text[buffer.cursor_position - 1] in r"!@#$%^&*:;,./?|\+-=~()[]{}<>_"
-            or buffer.text[buffer.cursor_position - 1].isspace()
-        )
-        or buffer.cursor_position == 0
-    ):
+    pos = buffer.cursor_position
+    text = buffer.text
+    before_ok = pos == 0 or (pos > 0 and (text[pos - 1].isspace()
+            or text[pos - 1] in set(r"!@#$%^&*:;,./?|+-=~()[]{}<>_")))
+    not_on_quote = pos >= len(text) or text[pos] != '"'
+    if should_completion(buffer) and before_ok and not_on_quote:
         _auto_editing = True
         buffer.insert_text('""')
         buffer.cursor_left()
