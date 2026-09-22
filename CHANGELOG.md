@@ -1,7 +1,12 @@
 # Change Log
 
 
-## [0.2.12] 2026-09-22 Improvements & Features
+## [0.2.13] 2026-09-22 Emergency Fix
+### Fix
+- `cd` now works correctly.
+
+
+## [0.2.12] 2026-09-22 Improvements & Features (buggy)
 ### Improved
 - Change the strategy of quote completion.
 - Better completer for paths.
