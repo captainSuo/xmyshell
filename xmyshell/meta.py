@@ -59,6 +59,8 @@ Built-in variables:
   exec_duration   -  The duration which last command took.
   HOME_DIR        -  The home directory, similar to "~".
   PROFILE         -  The path of config file.
+  SHOW_WELCOME    -  Toggle whether to show welcome message.
+  SHELL_CMD       -  Shell command line prefix, e.g. ["cmd", "/c"]
 
 Keyboard Shortcuts:
   ↑↓      -  Navigate through command history.

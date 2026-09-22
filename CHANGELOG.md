@@ -1,6 +1,17 @@
 # Change Log
 
 
+## [0.2.12] 2026-09-22 Improvements & Features
+### Improved
+- Change the strategy of quote completion.
+- Better completer for paths.
+- Better highlights.
+
+### Added
+- **Built-in variable** `WELCOME_MESSAGE`: Toggle whether to show welcome message when staring.
+- **Built-in variable** `SHELL_CMD`: Shell command line prefix, defaults to `["cmd", "/c"]` on Windows and `["bin/sh", "-c"]` on other OS.
+
+
 ## [0.2.11] 2026-09-20 Features
 ### Added
 - Add stubs file for xmyshell runtime.
