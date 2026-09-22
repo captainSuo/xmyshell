@@ -17,8 +17,9 @@ from .lexer import XmyShellLexer
 def xmyshell_main() -> None:
     xmyshell_init()
 
-    print(WELCOME_MESSAGE)
-    print(f"Initialized with {(time_ns() - _start_time) // 1_000_000}ms.")
+    if namespace.get("SHOW_WELCOME"):
+        print(WELCOME_MESSAGE)
+        print(f"Initialized with {(time_ns() - _start_time) // 1_000_000}ms.")
 
     session = PromptSession(
         history=FileHistory(os.path.expanduser("~/.xmyshell/history.txt")),

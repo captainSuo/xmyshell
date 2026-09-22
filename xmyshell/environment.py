@@ -35,6 +35,7 @@ _init_namespace: dict[str, Any] = {
     "cat": xmyshell_cat,
     "alias": xmyshell_alias,
     "unalias": xmyshell_unalias,
+    "SHOW_WELCOME": True,
     "SHELL_CMD": SHELL_CMD,
     "HOME_DIR": HOME_DIR,
     "PROFILE": f"{HOME_DIR}/.xmyshell/config.py",

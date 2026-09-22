@@ -153,6 +153,9 @@ The exit code of the last command.
 - `exec_duration`
 The duration which last command took.
 
+- `SHOW_WELCOME`
+Toggle whether to show welcome message when staring.
+
 - `SHELL_CMD`
 Shell command line prefix, defaults to `["cmd", "/c"]` on Windows and `["bin/sh", "-c"]` on other OS.
 
