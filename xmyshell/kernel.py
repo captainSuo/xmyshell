@@ -2,6 +2,7 @@ from collections.abc import Generator, Sequence
 from contextlib import contextmanager
 import os
 import sys
+import re
 import runpy
 import subprocess
 import signal
@@ -322,21 +323,31 @@ def xmyshell(cmd_line: str) -> int:
             try:
                 target_dir = os.path.expanduser(target_dir)
                 # only works on Windows
-                if os.name == "nt" and target_dir.startswith("/"):
-                    import re
-
+                if os.name == "nt":
                     if target_dir.startswith("/"):
-                        m = re.match(r"^/([a-zA-Z])/", target_dir)
+                        m = re.match(r"^/([a-zA-Z])(/.*)?$", target_dir)
                         if m:
                             drive = m.group(1).upper()
-                            target_dir = drive + ":/" + target_dir[3:]
-                os.chdir(target_dir)
+                            rest = m.group(2) or ""
+                            target_dir = drive + ":" + rest
+                    target_dir = target_dir.replace("\\", "/")
+                _splited = shlex.split(target_dir)
+                if len(_splited) > 1:
+                    pyerror("too many arguments")
+                    return -1
+                os.chdir(_splited[0])
                 return 0
             except FileNotFoundError:
-                pyerror(f"file not found: '{target_dir}'")
+                pyerror(f"file not found: {target_dir!r}")
                 return -1
             except NotADirectoryError:
-                pyerror(f"not a directory: '{target_dir}'")
+                pyerror(f"not a directory: {target_dir!r}")
+                return -1
+            except PermissionError:
+                pyerror(f"permission denied: {target_dir!r}")
+                return -1
+            except (OSError, ValueError):
+                pyerror(f"wrong path format: {target_dir!r}")
                 return -1
 
         case "source":
