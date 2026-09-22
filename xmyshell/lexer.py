@@ -14,6 +14,46 @@ def _is_number_literal(s: str) -> bool:
     except (ValueError, SyntaxError):
         return False
 
+def _shell_split_keep_sep(text: str) -> list[str]:
+    parts: list[str] = []
+    quote: str | None = None
+    i = 0
+    n = len(text)
+    seg_start = 0
+
+    def flush(end: int) -> None:
+        nonlocal seg_start
+        if end > seg_start:
+            parts.append(text[seg_start:end])
+        seg_start = end
+
+    while i < n:
+        ch = text[i]
+        if quote is None:
+            if ch in " \t":
+                flush(i)
+                j = i
+                while j < n and text[j] in " \t":
+                    j += 1
+                parts.append(text[i:j])
+                seg_start = j
+                i = j
+                continue
+            elif ch == "\\" and i + 1 < n:
+                i += 2
+                continue
+            elif ch in ("'", '"'):
+                quote = ch
+        else:
+            if ch == quote:
+                quote = None
+            elif ch == "\\" and quote == '"' and i + 1 < n:
+                i += 2
+                continue
+        i += 1
+    flush(n)
+    return parts
+
 def _split_with_braces_and_pipes(line: str) -> list[str]:
     parts = []
     outer_buf = []
@@ -86,7 +126,7 @@ def _split_with_braces_and_pipes(line: str) -> list[str]:
     return parts
 
 def _lex_cmd(cmd: str, first_word: bool = True) -> list[tuple[str, str]]:
-    parts: list[str] = re.split(r"(\s+)", cmd)
+    parts: list[str] = _shell_split_keep_sep(cmd)
     result: list[tuple[str, str]] = []
     for part in parts:
         if part == "":
