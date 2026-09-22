@@ -1,5 +1,6 @@
 from collections.abc import Generator, Iterable
 import os
+import shlex
 import sys
 import re
 import time
@@ -118,16 +119,51 @@ class ShellCompleter(Completer):
         others = sorted(c for c in commands if c not in COMMON and c not in BUILTINS)
         return builtins + common + others
 
-    def _path_completions(self, text: str, max_results: int = 100):
+    def _path_completions(self, text: str, max_results: int = 100, in_string: bool=False):
         if text and text[-1] in whitespace: return
-        last = text.split()[-1] if text.split() else ""
+
+        def last_token_raw(text: str) -> str:
+            quote = None
+            start = 0
+            i = 0
+            while i < len(text):
+                ch = text[i]
+                if quote:
+                    if ch == quote:
+                        quote = None
+                    elif ch == "\\" and quote == '"':
+                        i += 1
+                else:
+                    if ch in ("'", '"'):
+                        quote = ch
+                    elif ch in " \t":
+                        start = i + 1
+                    elif ch == "\\":
+                        i += 1
+                i += 1
+            return text[start:]
+
+        def start_pos(text: str, prefix: str) -> int:
+            original_len = len(text)
+            if text and text[-1] in ("'", '"') and not text.endswith(prefix):
+                text = text[:-1]
+            if not prefix or not text.endswith(prefix):
+                return -len(prefix)
+            start = len(text) - len(prefix)
+            if start > 0 and text[start - 1] in ("'", '"'):
+                start -= 1
+            return start - original_len
+
+        last = last_token_raw(text)
+        in_string = in_string or last.startswith('"') or last.startswith("'")
+        last = last.lstrip('"\'')
         if last == '~': return  # don't remove this
         path = os.path.expanduser(last)
         dirname = os.path.dirname(path) or "."
-        prefix = os.path.basename(path)
+        prefix = os.path.basename(path).strip('"\'')
 
         try:
-            matches = []
+            matches: list[str] = []
             for item in os.listdir(dirname):
                 if item.startswith(prefix):
                     matches.append(item)
@@ -137,11 +173,14 @@ class ShellCompleter(Completer):
             for item in sorted(matches):
                 full = os.path.join(dirname, item)
                 is_dir = os.path.isdir(full)
-                name = item + ("/" if is_dir else "")
+                if ' ' in item and not in_string:
+                    name = f'"{item}"'
+                else:
+                    name = item
                 yield Completion(
                     name,
-                    display=truncate(name, MAX_DISPLAY_LEN),
-                    start_position=-len(prefix),
+                    display=truncate(item, MAX_DISPLAY_LEN),
+                    start_position=start_pos(text, prefix),
                     display_meta="directory" if is_dir else "file",
                 )
         except OSError:
@@ -207,7 +246,7 @@ class ShellCompleter(Completer):
 
         string = _in_string(text)
         if string:
-            yield from self._path_completions(string)
+            yield from self._path_completions(string, in_string=True)
             return
 
         if text and text[-1].isspace():

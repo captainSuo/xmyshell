@@ -3,7 +3,6 @@ from prompt_toolkit.buffer import Buffer
 from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
 from prompt_toolkit.selection import SelectionState
 from prompt_toolkit.keys import Keys
-from prompt_toolkit.key_binding.bindings.auto_suggest import load_auto_suggest_bindings
 from dataclasses import dataclass
 
 @dataclass
@@ -356,3 +355,18 @@ def _(event: KeyPressEvent) -> None:
     _auto_editing = False
     _last_info = BufferInfo.from_buffer(buffer)
     _reset_undo_merge()
+
+@bindings.add(Keys.Tab)
+def _(event: KeyPressEvent) -> None:
+    buffer = event.current_buffer
+    if buffer.complete_state:
+        if buffer.complete_state.current_completion is None:
+            buffer.complete_next()
+        if buffer.complete_state.current_completion:
+            # Trailing space bypasses prompt_toolkit's `completion_does_nothing`
+            # filter (which hides completions identical to the replaced text) and
+            # doubles as the shell argument separator. Invisible characters would
+            # also bypass the filter, but would corrupt command parsing.
+            text = buffer.complete_state.current_completion.text
+            buffer.complete_state.current_completion.text = text.rstrip()
+            buffer.apply_completion(buffer.complete_state.current_completion)
