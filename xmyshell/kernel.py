@@ -1,11 +1,12 @@
 from collections.abc import Generator, Sequence
+from contextlib import contextmanager
 import os
 import sys
 import runpy
 import subprocess
 import signal
 import shlex
-from .environment import namespace, aliases, xmyshell_alias, xmyshell_unalias
+from .environment import namespace, aliases, xmyshell_alias, xmyshell_unalias, SHELL_CMD
 from .utils import pywarning, pyerror, getcwd
 from .meta import HELP_MESSAGE
 
@@ -14,8 +15,20 @@ def _reload() -> None:
     from .init import xmyshell_reload
     xmyshell_reload()
 
+def _reset_sigint():
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-def _run(*args, **kwargs) -> subprocess.CompletedProcess:
+_kwargs_preexec = {}
+if os.name == "posix":
+    _kwargs_preexec["preexec_fn"] = _reset_sigint
+
+@contextmanager
+def _no_interrupt():
+    old = signal.signal(signal.SIGINT, signal.SIG_IGN)
+    yield
+    signal.signal(signal.SIGINT, old)
+
+def _run(cmd_line: list[str] | str, **kwargs) -> subprocess.CompletedProcess:
     # Block SIGINT in the parent while the child runs, so that a Ctrl-C
     # delivered to the console/process group is handled solely by the child.
     #
@@ -26,17 +39,15 @@ def _run(*args, **kwargs) -> subprocess.CompletedProcess:
     # KeyboardInterrupt handler only fires for Ctrl-C at the prompt.
     #
     # Must run on the main thread: signal.signal() is not allowed elsewhere.
-    kwargs_preexec = {}
-    if os.name == "posix":
-        def _reset_sigint():
-            signal.signal(signal.SIGINT, signal.SIG_DFL)
-        kwargs_preexec["preexec_fn"] = _reset_sigint
-    old = signal.signal(signal.SIGINT, signal.SIG_IGN)
-    try:
-        return subprocess.run(*args, **kwargs_preexec, **kwargs)
-    finally:
-        signal.signal(signal.SIGINT, old)
-
+    with _no_interrupt():
+        if isinstance(cmd_line, list):
+            return subprocess.run(cmd_line, **_kwargs_preexec, **kwargs)
+        else:
+            return subprocess.run(
+                namespace.get("SHELL_CMD", SHELL_CMD) + [cmd_line],
+                **_kwargs_preexec,
+                **kwargs,
+            )
 
 def xmyshell_source(path: str) -> None:
     _updated = runpy.run_path(
@@ -250,29 +261,30 @@ def xmyshell(cmd_line: str) -> int:
         cmd_line, sh_cmd = cmd_line.split("|>", 1)
 
     if sh_cmd:
-        proc = subprocess.Popen(
-            sh_cmd,
-            shell=True,
-            env=os.environ,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            text=True,
-        )
-        old_stdout = sys.stdout
-        sys.stdout = proc.stdin
-        return_code = xmyshell_raw_command(cmd_line)
-        if return_code is None:
-            pyerror(f"'{cmd_line}' cannot be used in a pipeline with '|>'")
-            return -1
-        assert proc.stdin
-        proc.stdin.close()
-        sys.stdout = old_stdout
-        if target_var:
-            result, _ = proc.communicate()
-            namespace[target_var] = result
-            return proc.returncode
-        else:
-            return proc.wait()
+        with _no_interrupt():
+            proc = subprocess.Popen(
+                namespace.get("SHELL_CMD", SHELL_CMD) + [sh_cmd],
+                env=os.environ,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                text=True,
+                **_kwargs_preexec,
+            )
+            old_stdout = sys.stdout
+            sys.stdout = proc.stdin
+            return_code = xmyshell_raw_command(cmd_line)
+            if return_code is None:
+                pyerror(f"'{cmd_line}' cannot be used in a pipeline with '|>'")
+                return -1
+            assert proc.stdin
+            proc.stdin.close()
+            sys.stdout = old_stdout
+            if target_var:
+                result, _ = proc.communicate()
+                namespace[target_var] = result
+                return proc.returncode
+            else:
+                return proc.wait()
 
     if target_var:
         from io import StringIO
@@ -342,10 +354,10 @@ def xmyshell(cmd_line: str) -> int:
         cmd_line = _fix_first_word(cmd_line)
     if target_var:
         result = _run(
-            cmd_line, shell=True, env=os.environ, capture_output=True, text=True
+            cmd_line, env=os.environ, capture_output=True, text=True
         )
         namespace[target_var] = result.stdout
     else:
-        result = _run(cmd_line, shell=True, env=os.environ)
+        result = _run(cmd_line, env=os.environ)
 
     return result.returncode

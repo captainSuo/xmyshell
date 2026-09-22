@@ -153,6 +153,9 @@ The exit code of the last command.
 - `exec_duration`
 The duration which last command took.
 
+- `SHELL_CMD`
+Shell command line prefix, defaults to `["cmd", "/c"]` on Windows and `["bin/sh", "-c"]` on other OS.
+
 - `HOME_DIR`
 The home directory, similar to `~`.
 

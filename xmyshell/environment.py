@@ -10,6 +10,7 @@ from .utils import XMYSHELL_MAGIC, getcwd, getlogin, HOME_DIR, xmyshell_cat
 namespace: dict[str, Any] = {}
 aliases: dict[str, str] = {}
 init_environ: dict[str, str] = dict(os.environ)
+SHELL_CMD = ["cmd", "/c"] if os.name == "nt" else ["/bin/sh", "-c"]
 
 
 def xmyshell_alias(altname: str, target: str) -> None:
@@ -34,6 +35,7 @@ _init_namespace: dict[str, Any] = {
     "cat": xmyshell_cat,
     "alias": xmyshell_alias,
     "unalias": xmyshell_unalias,
+    "SHELL_CMD": SHELL_CMD,
     "HOME_DIR": HOME_DIR,
     "PROFILE": f"{HOME_DIR}/.xmyshell/config.py",
     "exit_code": 0,
