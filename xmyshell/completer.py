@@ -158,7 +158,10 @@ class ShellCompleter(Completer):
         in_string = in_string or last.startswith('"') or last.startswith("'")
         last = last.lstrip('"\'')
         if last == '~': return  # don't remove this
-        path = os.path.expanduser(last)
+        try:
+            path = os.path.expanduser(shlex.split(last)[0])
+        except (ValueError, IndexError):
+            path = os.path.expanduser(last)
         dirname = os.path.dirname(path) or "."
         prefix = os.path.basename(path).strip('"\'')
 

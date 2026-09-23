@@ -1,18 +1,26 @@
 from time import time_ns
+
 _start_time = time_ns()
 
+
 import os
-from prompt_toolkit import HTML, PromptSession
+from prompt_toolkit.application import get_app
 from prompt_toolkit.styles import Style
+from prompt_toolkit import HTML, PromptSession
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from .meta import WELCOME_MESSAGE
 from .environment import namespace
-from .keybindings import bindings, on_cursor_position_changed, on_text_changed, clean_buffer
+from .keybindings import (
+    bindings,
+    on_cursor_position_changed,
+    on_text_changed,
+    clean_buffer,
+)
 from .init import xmyshell_init
 from .kernel import pyeval, xmyshell
 from .lexer import XmyShellLexer
-
+from .injection import inject
 
 def xmyshell_main() -> None:
     xmyshell_init()
@@ -41,6 +49,7 @@ def xmyshell_main() -> None:
                     completer=namespace["shell_completer"],
                     placeholder=HTML(namespace["prompt_placeholder"]),
                     style=Style.from_dict(namespace["prompt_style"]),
+                    pre_run=inject,
                 )
                 start_time = time_ns()
                 namespace["exit_code"] = xmyshell(cmd_line)
