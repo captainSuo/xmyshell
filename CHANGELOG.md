@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.2.15] 2026-09-24 Improvement
+### Improved
+- Better completer.
+
+
 ## [0.2.14] 2026-09-23 Improvement
 ### Improved
 - Better completer.
