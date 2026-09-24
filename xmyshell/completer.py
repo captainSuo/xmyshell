@@ -341,7 +341,10 @@ class ShellCompleter(Completer):
         yield from self._environment_completion(text)
 
     def _subcommand_completion(self, text: str):
-        parts = text.split()
+        try:
+            parts = shlex.split(text)
+        except ValueError:
+            parts = text.split()
         if not parts: return
         sub_cmd = COMMAND_TREE.get(parts[0])
         if not sub_cmd: return
@@ -365,7 +368,7 @@ class ShellCompleter(Completer):
 
         for name in sorted(sub_cmd.keys()):
             if name == "_global" or name == "_flags": continue
-            if name in parts: continue
+            if name in parts[:-1]: continue
             if name.startswith(last_word):
                 yield Completion(
                     name,
@@ -375,7 +378,7 @@ class ShellCompleter(Completer):
                 )
 
         for name in sorted(sub_cmd.get("_flags") or set()):
-            if name in parts: continue
+            if name in parts[:-1]: continue
             if name.startswith(last_word):
                 yield Completion(
                     name,
@@ -385,7 +388,7 @@ class ShellCompleter(Completer):
                 )
 
         for name in sorted(global_flags):
-            if name in parts: continue
+            if name in parts[:-1]: continue
             if name.startswith(last_word):
                 yield Completion(
                     name,
