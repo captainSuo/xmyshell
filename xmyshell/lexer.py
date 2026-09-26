@@ -227,7 +227,7 @@ def _lex_line(line: str) -> list[tuple[str, str]]:
     leading_spaces = line[:len(line) - len(line.lstrip())]
     _splited = line.lstrip().split(None, 1)
     _cmd = _splited[0] if _splited else ""
-    if _cmd in ["pyexec", "print"]:
+    if _cmd in ["pyexec", "print", "pwd", "help"]:
         sh_cmd = None
         if "|>" in line:
             line, sh_cmd = line.split("|>", 1)
