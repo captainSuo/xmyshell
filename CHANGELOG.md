@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.2.16] 2026-09-27 Improvement
+### Improved
+- Better lexer.
+
+### Removed
+- Remove `fix_first_word`
+
+
 ## [0.2.15] 2026-09-24 Improvement
 ### Improved
 - Better completer.
