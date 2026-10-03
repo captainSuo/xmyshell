@@ -1,5 +1,14 @@
 # Change Log
 
+
+## [0.2.17] 2026-10-03 Improvement
+### Removed
+- Lexer.
+
+### Note
+- Since our lexer is buggy, we will no longer maintain it.
+
+
 ## [0.2.16] 2026-09-27 Improvement
 ### Improved
 - Better lexer.
