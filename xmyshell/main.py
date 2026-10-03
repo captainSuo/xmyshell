@@ -19,7 +19,6 @@ from .keybindings import (
 )
 from .init import xmyshell_init
 from .kernel import pyeval, xmyshell
-from .lexer import XmyShellLexer
 from .injection import inject
 
 def xmyshell_main() -> None:
@@ -35,7 +34,6 @@ def xmyshell_main() -> None:
         complete_in_thread=True,
         complete_while_typing=True,
         key_bindings=bindings,
-        lexer=XmyShellLexer(),
     )
     session.default_buffer.on_cursor_position_changed += on_cursor_position_changed
     session.default_buffer.on_text_changed += on_text_changed
