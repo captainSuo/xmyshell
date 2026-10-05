@@ -43,6 +43,7 @@ _init_namespace: dict[str, Any] = {
     "exec_duration": 0,
     "last_error": None,
     "last_traceback": None,
+    "ans": None,
     "shell_prompt": "",
     "shell_rprompt": "",
     "prompt_placeholder": "",
