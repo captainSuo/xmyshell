@@ -1,6 +1,11 @@
 # Change Log
 
 
+## [0.2.18] 2026-10-05 Feature
+### Added
+- Built-in variable `ans`: The result from last print command.
+
+
 ## [0.2.17] 2026-10-03 Improvement
 ### Removed
 - Lexer.

@@ -57,6 +57,9 @@ Helper Functions:
 Built-in variables:
   exit_code       -  The exit code of the last command.
   exec_duration   -  The duration which last command took.
+  last_error      -  The error raised from last Python operation (if exists).
+  last_traceback  -  The traceback of last Python operation (if exists).
+  ans             -  The result from last print command.
   HOME_DIR        -  The home directory, similar to "~".
   PROFILE         -  The path of config file.
   SHOW_WELCOME    -  Toggle whether to show welcome message.

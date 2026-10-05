@@ -153,6 +153,15 @@ The exit code of the last command.
 - `exec_duration`
 The duration which last command took.
 
+- `last_error`
+The error raised from last Python operation (if exists).
+
+- `last_traceback`
+The traceback of last Python operation (if exists).
+
+- `ans`
+The result from last print command.
+
 - `SHOW_WELCOME`
 Toggle whether to show welcome message when staring.
 
