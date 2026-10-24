@@ -1,6 +1,11 @@
 # Change Log
 
 
+## [0.2.19] 2026-10-24 Improvement
+### Improved
+- Colorful help message.
+
+
 ## [0.2.18] 2026-10-05 Feature
 ### Added
 - Built-in variable `ans`: The result from last print command.
