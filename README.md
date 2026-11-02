@@ -116,8 +116,8 @@ Here is an example (though there are other ways to do this, it is just an exampl
 ❯ pip install {cat("requirements.txt").splitlines()}
 ```
 
+- Multiline input with ending `\`.
 
-- Syntax highlighting via `prompt_toolkit`
 - Powerful auto-completion, history search, and automatic bracket/quote pairing
 - Startup configuration: `~/.xmyshell/config.py` loaded at launch
 - Cross-platform (Windows, Linux, macOS)
@@ -180,6 +180,7 @@ The path of config file.
 - `Ctrl+R` -> Reverse incremental searching (history).
 - `Ctrl+Z` -> Undo.
 - `Ctrl+Y` -> Redo.
+- `Ctrl+G` -> Hide completions.
 - `Ctrl+D` -> Exit XmyShell.
 - Auto bracket/parenthesis/quote pairing
 

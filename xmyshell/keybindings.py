@@ -1,5 +1,6 @@
 import time
 from prompt_toolkit.buffer import Buffer
+from prompt_toolkit.filters import has_completions
 from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
 from prompt_toolkit.selection import SelectionState
 from prompt_toolkit.keys import Keys
@@ -370,3 +371,19 @@ def _(event: KeyPressEvent) -> None:
             text = buffer.complete_state.current_completion.text
             buffer.complete_state.current_completion.text = text.rstrip()
             buffer.apply_completion(buffer.complete_state.current_completion)
+
+@bindings.add(Keys.Enter)
+def handle_enter(event):
+    buffer = event.current_buffer
+    current_line = buffer.document.current_line_before_cursor
+
+    if current_line.rstrip().endswith("\\"):
+        stripped = current_line.rstrip()
+        buffer.delete_before_cursor(count=len(current_line) - len(stripped) + 1)
+        buffer.insert_text("\n")
+    else:
+        buffer.validate_and_handle()
+
+@bindings.add("escape", filter=has_completions, eager=True)
+def cancel_completion(event):
+    event.current_buffer.cancel_completion()

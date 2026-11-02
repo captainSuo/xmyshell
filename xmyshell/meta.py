@@ -82,4 +82,5 @@ HELP_MESSAGE = f"""{BOLD}{CYAN}
   {MAGENTA}Ctrl+R               {CYAN}Reverse incremental searching (history).
   {MAGENTA}Ctrl+Z               {CYAN}Undo.
   {MAGENTA}Ctrl+Y               {CYAN}Redo.
+  {MAGENTA}Ctrl+G               {CYAN}Hide completions.
   {MAGENTA}Ctrl+D               {CYAN}Exit XmyShell.{RESET}"""

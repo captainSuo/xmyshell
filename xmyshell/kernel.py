@@ -234,7 +234,7 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
 
 
 def xmyshell(cmd_line: str) -> int:
-    cmd_line = cmd_line.strip()
+    cmd_line = cmd_line.strip().replace("\\\n", "\t")
     if not cmd_line:
         return 0
 
