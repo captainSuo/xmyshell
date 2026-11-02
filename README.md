@@ -117,6 +117,14 @@ Here is an example (though there are other ways to do this, it is just an exampl
 ```
 
 - Multiline input with ending `\`.
+```
+[~] $ pyexec
+......
+......def foo():
+......    print("Hello!")
+[~] $ pyexec foo()
+Hello!
+```
 
 - Powerful auto-completion, history search, and automatic bracket/quote pairing
 - Startup configuration: `~/.xmyshell/config.py` loaded at launch

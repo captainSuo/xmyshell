@@ -1,6 +1,11 @@
 # Change Log
 
 
+## [0.2.20] 2026-11-02 Feature
+### Added
+- Multiline input enabled.
+
+
 ## [0.2.19] 2026-10-24 Improvement
 ### Improved
 - Colorful help message.
