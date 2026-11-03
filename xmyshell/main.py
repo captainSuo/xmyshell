@@ -10,7 +10,7 @@ from prompt_toolkit import HTML, PromptSession
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from .meta import WELCOME_MESSAGE
-from .environment import namespace
+from .environment import localspace
 from .keybindings import (
     bindings,
     on_cursor_position_changed,
@@ -27,7 +27,7 @@ def _continuation(width, line_number, is_soft_wrap):
 def xmyshell_main() -> None:
     xmyshell_init()
 
-    if namespace.get("SHOW_WELCOME"):
+    if localspace.get("SHOW_WELCOME"):
         print(WELCOME_MESSAGE)
         print(f"Initialized with {(time_ns() - _start_time) // 1_000_000}ms.")
 
@@ -47,16 +47,16 @@ def xmyshell_main() -> None:
         while True:
             try:
                 cmd_line: str = session.prompt(
-                    HTML(pyeval(namespace["shell_prompt"])),
-                    rprompt=HTML(pyeval(namespace["shell_rprompt"])),
-                    completer=namespace["shell_completer"],
-                    placeholder=HTML(namespace["prompt_placeholder"]),
-                    style=Style.from_dict(namespace["prompt_style"]),
+                    HTML(pyeval(localspace["shell_prompt"])),
+                    rprompt=HTML(pyeval(localspace["shell_rprompt"])),
+                    completer=localspace["shell_completer"],
+                    placeholder=HTML(localspace["prompt_placeholder"]),
+                    style=Style.from_dict(localspace["prompt_style"]),
                     pre_run=inject,
                 )
                 start_time = time_ns()
-                namespace["exit_code"] = xmyshell(cmd_line)
-                namespace["exec_duration"] = time_ns() - start_time
+                localspace["exit_code"] = xmyshell(cmd_line)
+                localspace["exec_duration"] = time_ns() - start_time
                 clean_buffer()
             except KeyboardInterrupt:
                 print("Ctrl-C")

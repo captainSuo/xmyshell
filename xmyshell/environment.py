@@ -7,7 +7,17 @@ from typing import Any
 from collections.abc import Mapping
 from .utils import XMYSHELL_MAGIC, getcwd, getlogin, HOME_DIR, xmyshell_cat
 
-namespace: dict[str, Any] = {}
+class LocalSpace(dict):
+    def __init__(self, readonly):
+        super().__init__()
+        self._readonly = readonly
+
+    def __missing__(self, key):
+        if key in self._readonly:
+            return self._readonly[key]
+        raise KeyError(key)
+
+localspace: dict[str, Any] = LocalSpace(os.environ)
 aliases: dict[str, str] = {}
 init_environ: dict[str, str] = dict(os.environ)
 SHELL_CMD = ["cmd", "/c"] if os.name == "nt" else ["/bin/sh", "-c"]
@@ -52,8 +62,8 @@ _init_namespace: dict[str, Any] = {
 
 
 def load_init_namespace() -> None:
-    namespace.clear()
-    namespace.update(_init_namespace)
+    localspace.clear()
+    localspace.update(_init_namespace)
 
 
 def update_namespace(values: Mapping[str, object]) -> None:
@@ -71,5 +81,5 @@ def update_namespace(values: Mapping[str, object]) -> None:
             frame.f_locals.update(values)
             return
         depth += 1
-    namespace.update(values)  # kernal
+    localspace.update(values)  # kernal
 

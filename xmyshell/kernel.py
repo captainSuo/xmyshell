@@ -7,7 +7,7 @@ import runpy
 import subprocess
 import signal
 import shlex
-from .environment import namespace, aliases, xmyshell_alias, xmyshell_unalias, SHELL_CMD
+from .environment import localspace, aliases, xmyshell_alias, xmyshell_unalias, SHELL_CMD
 from .utils import pywarning, pyerror, getcwd
 from .meta import HELP_MESSAGE
 
@@ -45,7 +45,7 @@ def _run(cmd_line: list[str] | str, **kwargs) -> subprocess.CompletedProcess:
             return subprocess.run(cmd_line, **_kwargs_preexec, **kwargs)
         else:
             return subprocess.run(
-                namespace.get("SHELL_CMD", SHELL_CMD) + [cmd_line],
+                localspace.get("SHELL_CMD", SHELL_CMD) + [cmd_line],
                 **_kwargs_preexec,
                 **kwargs,
             )
@@ -53,11 +53,11 @@ def _run(cmd_line: list[str] | str, **kwargs) -> subprocess.CompletedProcess:
 def xmyshell_source(path: str) -> None:
     _updated = runpy.run_path(
         path_name=os.path.expanduser(path),
-        init_globals=namespace,
+        init_globals=localspace,
         run_name="__main__",
     )
-    namespace.clear()
-    namespace.update(_updated)
+    localspace.clear()
+    localspace.update(_updated)
 
 
 def pyeval(cmd_line: str) -> str:
@@ -89,7 +89,7 @@ def pyeval(cmd_line: str) -> str:
                 expr = cmd_line[i+1:j-1].strip()
                 if expr:
                     try:
-                        val = eval(expr, dict(os.environ), namespace)
+                        val = eval(expr, localspace, localspace)
                         if not isinstance(
                             val, (str, bytes, bytearray, memoryview)
                         ) and isinstance(val, (Sequence, Generator)):
@@ -133,14 +133,14 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
                 pyerror("pyexec: missing code")
                 return -1
             try:
-                exec(code, dict(os.environ), namespace)
-                namespace["last_error"] = None
+                exec(code, localspace, localspace)
+                localspace["last_error"] = None
                 return 0
             except Exception as e:
                 import traceback
 
-                namespace["last_error"] = e
-                namespace["last_traceback"] = traceback.format_exc()
+                localspace["last_error"] = e
+                localspace["last_traceback"] = traceback.format_exc()
                 pyerror(f"{type(e).__name__}: {e}")
                 return -1
 
@@ -166,7 +166,7 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
             try:
                 altname, alias_target = code.split('=', 1)
                 altname = altname.strip()
-                xmyshell_alias(altname, eval(alias_target, namespace, {}))
+                xmyshell_alias(altname, eval(alias_target, localspace, {}))
                 return 0
             except Exception as e:
                 pyerror(f"{type(e).__name__}: {e}")
@@ -186,15 +186,15 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
                 pyerror("print: missing expression")
                 return -1
             try:
-                result = eval(expr, dict(os.environ), namespace)
+                result = eval(expr, localspace, localspace)
                 print(result)
-                namespace["last_error"] = None
-                namespace["ans"] = result
+                localspace["last_error"] = None
+                localspace["ans"] = result
                 return 0
             except Exception as e:
                 import traceback
-                namespace["last_error"] = e
-                namespace["last_traceback"] = traceback.format_exc()
+                localspace["last_error"] = e
+                localspace["last_traceback"] = traceback.format_exc()
                 pyerror(f"{type(e).__name__}: {e}")
                 return -1
 
@@ -226,7 +226,7 @@ def xmyshell_raw_command(cmd_line: str) -> int | None:
 
     if command.startswith("import") or command.startswith("from"):
         try:
-            exec(cmd_line, dict(os.environ), namespace)
+            exec(cmd_line, localspace, localspace)
             return 0
         except Exception as e:
             pyerror(f"{type(e).__name__}: {e}")
@@ -248,7 +248,7 @@ def xmyshell(cmd_line: str) -> int:
     if sh_cmd:
         with _no_interrupt():
             proc = subprocess.Popen(
-                namespace.get("SHELL_CMD", SHELL_CMD) + [sh_cmd],
+                localspace.get("SHELL_CMD", SHELL_CMD) + [sh_cmd],
                 env=os.environ,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
@@ -266,7 +266,7 @@ def xmyshell(cmd_line: str) -> int:
             sys.stdout = old_stdout
             if target_var:
                 result, _ = proc.communicate()
-                namespace[target_var] = result
+                localspace[target_var] = result
                 return proc.returncode
             else:
                 return proc.wait()
@@ -278,7 +278,7 @@ def xmyshell(cmd_line: str) -> int:
         with redirect_stdout(f):
             return_code = xmyshell_raw_command(cmd_line)
         if return_code is not None:
-            namespace[target_var] = f.getvalue()
+            localspace[target_var] = f.getvalue()
             return return_code
     else:
         return_code = xmyshell_raw_command(cmd_line)
@@ -349,7 +349,7 @@ def xmyshell(cmd_line: str) -> int:
         result = _run(
             cmd_line, env=os.environ, capture_output=True, text=True
         )
-        namespace[target_var] = result.stdout
+        localspace[target_var] = result.stdout
     else:
         result = _run(cmd_line, env=os.environ)
 

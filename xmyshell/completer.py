@@ -10,7 +10,7 @@ import pkgutil
 from string import whitespace
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from prompt_toolkit.document import Document
-from .environment import namespace, aliases
+from .environment import localspace, aliases
 from .utils import truncate
 from pathlib import Path
 
@@ -273,8 +273,8 @@ class ShellCompleter(Completer):
 
                 obj = None
                 root = self._last_identifier(parts[start])
-                if root in namespace:
-                    obj = namespace[root]
+                if root in localspace:
+                    obj = localspace[root]
                 elif hasattr(__builtins__, root):
                     obj = getattr(__builtins__, root)
                 elif isinstance(__builtins__, dict) and root in __builtins__:
@@ -323,10 +323,10 @@ class ShellCompleter(Completer):
         else:
             builtins_candidates = []
 
-        candidates = set(namespace.keys()) | set(builtins_candidates)
+        candidates = set(localspace.keys()) | set(builtins_candidates)
         for name in sorted(candidates) + KEYWORDS:
-            if name in namespace:
-                meta = truncate(type(namespace[name]).__name__, MAX_META_LEN)
+            if name in localspace:
+                meta = truncate(type(localspace[name]).__name__, MAX_META_LEN)
             elif name in __builtins__:
                 meta = truncate(type(__builtins__[name]).__name__, MAX_META_LEN)
             else:
@@ -518,4 +518,4 @@ class ShellCompleter(Completer):
         return completions
 
 def completer_init() -> None:
-    namespace["shell_completer"] = ShellCompleter()
+    localspace["shell_completer"] = ShellCompleter()
