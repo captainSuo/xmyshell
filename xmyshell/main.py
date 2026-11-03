@@ -21,8 +21,6 @@ from .init import xmyshell_init
 from .kernel import pyeval, xmyshell
 from .injection import inject
 
-def _continuation(width, line_number, is_soft_wrap):
-    return HTML("<style fg='ansidarkgray'>" + '.' * width + "</style>")
 
 def xmyshell_main() -> None:
     xmyshell_init()
@@ -38,7 +36,7 @@ def xmyshell_main() -> None:
         complete_while_typing=True,
         key_bindings=bindings,
         multiline=True,
-        prompt_continuation=_continuation,
+        prompt_continuation="",
     )
     session.default_buffer.on_cursor_position_changed += on_cursor_position_changed
     session.default_buffer.on_text_changed += on_text_changed
