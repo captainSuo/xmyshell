@@ -371,6 +371,8 @@ def _(event: KeyPressEvent) -> None:
             text = buffer.complete_state.current_completion.text
             buffer.complete_state.current_completion.text = text.rstrip()
             buffer.apply_completion(buffer.complete_state.current_completion)
+    else:
+        buffer.insert_text("    ")
 
 @bindings.add(Keys.Enter)
 def handle_enter(event):
