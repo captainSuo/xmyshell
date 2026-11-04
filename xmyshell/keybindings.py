@@ -375,7 +375,7 @@ def _(event: KeyPressEvent) -> None:
         buffer.insert_text("    ")
 
 @bindings.add(Keys.Enter)
-def handle_enter(event):
+def _(event: KeyPressEvent):
     buffer = event.current_buffer
     current_line = buffer.document.current_line_before_cursor
 
@@ -386,6 +386,6 @@ def handle_enter(event):
     else:
         buffer.validate_and_handle()
 
-@bindings.add("escape", filter=has_completions, eager=True)
-def cancel_completion(event):
+@bindings.add(Keys.Escape, filter=has_completions, eager=True)
+def _(event: KeyPressEvent):
     event.current_buffer.cancel_completion()
