@@ -1,6 +1,14 @@
 # Change Log
 
 
+## [0.2.21] 2026-11-02
+### Fixed
+- Give shell-defined functions a live global namespace
+
+### Added
+- Keyboard shortcut to insert tab.
+
+
 ## [0.2.20] 2026-11-02 Feature
 ### Added
 - Multiline input enabled.
