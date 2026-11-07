@@ -1,7 +1,17 @@
 # Change Log
 
 
-## [0.2.21] 2026-11-02 Fix
+## [0.2.23] 2026-11-07 Features
+### Added
+- Use `cd -` to return to the last used directory.
+- Accept generator expression s without parenthsis. e.g. echo {f'file{i}' for i in range(5)}
+- Remove trailing '\n' in the result of output capture.
+
+### Fixed
+- Fix the bug that `<Enter>` does not work in `reverse-i-search`.
+
+
+## [0.2.22] 2026-11-07 Fix
 ### Fixed
 - Fix the bugs in completing paths with spaces.
 
