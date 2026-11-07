@@ -368,15 +368,10 @@ class ShellCompleter(Completer):
         last_word = parts[-1]
 
         for part in parts[1:-1]:
-            if part.startswith("-"):
-                continue
             if sub_cmd.get("_global"):
                 global_flags.update(sub_cmd["_global"])
             if sub_cmd.get(part):
                 sub_cmd = sub_cmd[part]
-            else:
-                sub_cmd = {}
-                break
 
         for name in sorted(sub_cmd.keys()):
             if name == "_global" or name == "_flags": continue
@@ -388,6 +383,9 @@ class ShellCompleter(Completer):
                     display=truncate(name, MAX_DISPLAY_LEN),
                     display_meta="subcommand"
                 )
+
+        # not auto complete flags unless user types them
+        if last_word == "": return
 
         for name in sorted(sub_cmd.get("_flags") or set()):
             if name in parts[:-1]: continue
