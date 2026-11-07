@@ -1,6 +1,11 @@
 # Change Log
 
 
+## [0.2.21] 2026-11-02 Fix
+### Fixed
+- Fix the bugs in completing paths with spaces.
+
+
 ## [0.2.21] 2026-11-02
 ### Fixed
 - Give shell-defined functions a live global namespace

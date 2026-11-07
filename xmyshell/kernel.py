@@ -7,6 +7,7 @@ import runpy
 import subprocess
 import signal
 import shlex
+from webbrowser import get
 from .environment import localspace, aliases, xmyshell_alias, xmyshell_unalias, SHELL_CMD
 from .utils import pywarning, pyerror, getcwd
 from .meta import HELP_MESSAGE
@@ -304,6 +305,9 @@ def xmyshell(cmd_line: str) -> int:
         case "cd":
             splited = cmd_line.split(maxsplit=1)
             target_dir = "~" if len(splited) <= 1 else splited[1].strip()
+            if target_dir == '-':
+                target_dir = os.environ.get("OLDPWD", getcwd())
+                print(target_dir)
             try:
                 target_dir = os.path.expanduser(target_dir)
                 # only works on Windows
@@ -319,6 +323,7 @@ def xmyshell(cmd_line: str) -> int:
                 if len(_splited) > 1:
                     pyerror("too many arguments")
                     return -1
+                os.environ["OLDPWD"] = getcwd()
                 os.chdir(_splited[0])
                 return 0
             except FileNotFoundError:
