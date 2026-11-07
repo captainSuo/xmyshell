@@ -122,7 +122,7 @@ class ShellCompleter(Completer):
     def _path_completions(self, text: str, max_results: int = 100, in_string: bool=False):
         if text and text[-1] in whitespace: return
 
-        def last_token_raw(text: str) -> str:
+        def last_token_raw(text: str) -> tuple[str, bool]:
             quote = None
             start = 0
             i = 0
@@ -141,26 +141,38 @@ class ShellCompleter(Completer):
                     elif ch == "\\":
                         i += 1
                 i += 1
-            return text[start:]
+            return text[start:], quote is not None
 
-        def start_pos(text: str, prefix: str) -> int:
-            original_len = len(text)
-            if text and text[-1] in ("'", '"') and not text.endswith(prefix):
-                text = text[:-1]
-            if not prefix or not text.endswith(prefix):
-                return -len(prefix)
-            start = len(text) - len(prefix)
-            if start > 0 and text[start - 1] in ("'", '"'):
-                start -= 1
-            return start - original_len
+        def split_lenient(s: str) -> list[str] | None:
+            try:
+                return shlex.split(s)
+            except ValueError:
+                pass
+            quote = None
+            i = 0
+            while i < len(s):
+                ch = s[i]
+                if quote:
+                    if ch == quote: quote = None
+                    elif ch == '\\' and quote == '"': i += 1
+                else:
+                    if ch in ('"', "'"): quote = ch
+                    elif ch == '\\': i += 1
+                i += 1
+            if quote:
+                try:
+                    return shlex.split(s + quote)
+                except ValueError:
+                    pass
+            return None
 
-        last = last_token_raw(text)
-        in_string = in_string or last.startswith('"') or last.startswith("'")
-        last = last.lstrip('"\'')
+        last, still_in = last_token_raw(text)
+        in_string = in_string or still_in
         if last == '~': return  # don't remove this
-        try:
-            path = os.path.expanduser(shlex.split(last)[0])
-        except (ValueError, IndexError):
+        parts = split_lenient(last)
+        if parts:
+            path = os.path.expanduser(parts[0])
+        else:
             path = os.path.expanduser(last)
         dirname = os.path.dirname(path) or "."
         prefix = os.path.basename(path).strip('"\'')
@@ -183,7 +195,7 @@ class ShellCompleter(Completer):
                 yield Completion(
                     name,
                     display=truncate(item, MAX_DISPLAY_LEN),
-                    start_position=start_pos(text, prefix),
+                    start_position=-len(prefix),
                     display_meta="directory" if is_dir else "file",
                 )
         except OSError:
