@@ -1,6 +1,6 @@
 import time
 from prompt_toolkit.buffer import Buffer
-from prompt_toolkit.filters import has_completions
+from prompt_toolkit.filters import has_completions, is_searching
 from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
 from prompt_toolkit.selection import SelectionState
 from prompt_toolkit.keys import Keys
@@ -374,7 +374,7 @@ def _(event: KeyPressEvent) -> None:
     else:
         buffer.insert_text("    ")
 
-@bindings.add(Keys.Enter)
+@bindings.add(Keys.Enter, filter=~is_searching)
 def _(event: KeyPressEvent):
     buffer = event.current_buffer
     current_line = buffer.document.current_line_before_cursor
