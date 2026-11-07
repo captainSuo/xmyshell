@@ -267,7 +267,7 @@ def xmyshell(cmd_line: str) -> int:
             sys.stdout = old_stdout
             if target_var:
                 result, _ = proc.communicate()
-                localspace[target_var] = result
+                localspace[target_var] = result.rstrip('\n')
                 return proc.returncode
             else:
                 return proc.wait()
@@ -279,7 +279,7 @@ def xmyshell(cmd_line: str) -> int:
         with redirect_stdout(f):
             return_code = xmyshell_raw_command(cmd_line)
         if return_code is not None:
-            localspace[target_var] = f.getvalue()
+            localspace[target_var] = f.getvalue().rstrip('\n')
             return return_code
     else:
         return_code = xmyshell_raw_command(cmd_line)
@@ -354,7 +354,7 @@ def xmyshell(cmd_line: str) -> int:
         result = _run(
             cmd_line, env=os.environ, capture_output=True, text=True
         )
-        localspace[target_var] = result.stdout
+        localspace[target_var] = str(result.stdout).rstrip('\n')
     else:
         result = _run(cmd_line, env=os.environ)
 
