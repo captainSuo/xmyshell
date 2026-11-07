@@ -10,7 +10,7 @@ def main() -> None:
         xmyshell_main()
     elif argv[1] == "--update":
         subprocess.run([sys.executable, "-m", "xmyshell.update"] + argv[2:])
-    elif argv[1] == "--version":
+    elif argv[1] == "--version" or argv[1] == "-v":
         from .meta import WELCOME_MESSAGE
         print(WELCOME_MESSAGE)
     elif argv[1] == "--help":
