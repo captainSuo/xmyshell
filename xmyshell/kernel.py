@@ -90,7 +90,7 @@ def pyeval(cmd_line: str) -> str:
                 expr = cmd_line[i+1:j-1].strip()
                 if expr:
                     try:
-                        val = eval(expr, localspace, localspace)
+                        val = eval(f"({expr})", localspace, localspace)
                         if not isinstance(
                             val, (str, bytes, bytearray, memoryview)
                         ) and isinstance(val, (Sequence, Generator)):
