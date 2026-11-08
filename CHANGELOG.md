@@ -1,6 +1,14 @@
 # Change Log
 
 
+## [0.2.24] 2026-11-08
+### Added
+- Add completions for a few programs.
+
+### Fixed
+- Fix a few bugs in subcommand completer.
+
+
 ## [0.2.23] 2026-11-07 Features
 ### Added
 - Use `cd -` to return to the last used directory.
