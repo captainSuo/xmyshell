@@ -6161,5 +6161,1352 @@
       "-x",
       "-Z"
     ]
+  },
+  "tmux": {
+    "_global": [
+      "-2",
+      "-C",
+      "-D",
+      "-l",
+      "-N",
+      "-u",
+      "-v",
+      "-V",
+      "-c",
+      "-f",
+      "-L",
+      "-S",
+      "-T"
+    ],
+
+    "new-session": {
+      "_flags": [
+        "-d",
+        "-P",
+        "-A",
+        "-s",
+        "-n",
+        "-c",
+        "-x",
+        "-y",
+        "-F",
+        "-e",
+        "-f",
+        "-t"
+      ]
+    },
+    "new": {
+      "_flags": [
+        "-d",
+        "-P",
+        "-A",
+        "-s",
+        "-n",
+        "-c",
+        "-x",
+        "-y",
+        "-F",
+        "-e",
+        "-f",
+        "-t"
+      ]
+    },
+
+    "attach-session": {
+      "_flags": ["-d", "-r", "-t", "-c", "-E", "-f"]
+    },
+    "attach": {
+      "_flags": ["-d", "-r", "-t", "-c", "-E", "-f"]
+    },
+    "at": {
+      "_flags": ["-d", "-r", "-t", "-c", "-E", "-f"]
+    },
+    "a": {
+      "_flags": ["-d", "-r", "-t", "-c", "-E", "-f"]
+    },
+
+    "detach-client": {
+      "_flags": ["-a", "-P", "-s", "-t", "-E"]
+    },
+    "detach": {
+      "_flags": ["-a", "-P", "-s", "-t", "-E"]
+    },
+
+    "has-session": {
+      "_flags": ["-t"]
+    },
+    "has": {
+      "_flags": ["-t"]
+    },
+
+    "kill-session": {
+      "_flags": ["-a", "-t", "-C"]
+    },
+    "kill-ses": {
+      "_flags": ["-a", "-t", "-C"]
+    },
+
+    "kill-server": {},
+    "kill-server-alias": {},
+
+    "list-sessions": {
+      "_flags": ["-F", "-f"]
+    },
+    "ls": {
+      "_flags": ["-F", "-f"]
+    },
+
+    "rename-session": {
+      "_flags": ["-t"]
+    },
+    "rename": {
+      "_flags": ["-t"]
+    },
+
+    "switch-client": {
+      "_flags": ["-E", "-l", "-n", "-p", "-r", "-Z", "-c", "-t", "-T"]
+    },
+    "switchc": {
+      "_flags": ["-E", "-l", "-n", "-p", "-r", "-Z", "-c", "-t", "-T"]
+    },
+
+    "new-window": {
+      "_flags": ["-a", "-d", "-k", "-P", "-S", "-n", "-c", "-F", "-e", "-t"]
+    },
+    "neww": {
+      "_flags": ["-a", "-d", "-k", "-P", "-S", "-n", "-c", "-F", "-e", "-t"]
+    },
+
+    "kill-window": {
+      "_flags": ["-a", "-t"]
+    },
+    "killw": {
+      "_flags": ["-a", "-t"]
+    },
+
+    "list-windows": {
+      "_flags": ["-a", "-F", "-f", "-t"]
+    },
+    "lsw": {
+      "_flags": ["-a", "-F", "-f", "-t"]
+    },
+
+    "link-window": {
+      "_flags": ["-a", "-d", "-k", "-s", "-t"]
+    },
+    "linkw": {
+      "_flags": ["-a", "-d", "-k", "-s", "-t"]
+    },
+
+    "move-window": {
+      "_flags": ["-a", "-d", "-k", "-r", "-s", "-t"]
+    },
+    "movew": {
+      "_flags": ["-a", "-d", "-k", "-r", "-s", "-t"]
+    },
+
+    "rename-window": {
+      "_flags": ["-t"]
+    },
+    "renamew": {
+      "_flags": ["-t"]
+    },
+
+    "select-window": {
+      "_flags": ["-l", "-n", "-p", "-t"]
+    },
+    "selectw": {
+      "_flags": ["-l", "-n", "-p", "-t"]
+    },
+
+    "swap-window": {
+      "_flags": ["-d", "-s", "-t"]
+    },
+    "swapw": {
+      "_flags": ["-d", "-s", "-t"]
+    },
+
+    "next-window": {
+      "_flags": ["-a"]
+    },
+    "next": {
+      "_flags": ["-a"]
+    },
+
+    "previous-window": {
+      "_flags": ["-a"]
+    },
+    "prev": {
+      "_flags": ["-a"]
+    },
+
+    "last-window": {},
+    "last": {},
+
+    "find-window": {
+      "_flags": ["-C", "-N", "-T", "-r", "-t"]
+    },
+    "findw": {
+      "_flags": ["-C", "-N", "-T", "-r", "-t"]
+    },
+
+    "split-window": {
+      "_flags": [
+        "-b",
+        "-d",
+        "-f",
+        "-h",
+        "-v",
+        "-l",
+        "-p",
+        "-P",
+        "-Z",
+        "-c",
+        "-e",
+        "-F",
+        "-t"
+      ]
+    },
+    "splitw": {
+      "_flags": [
+        "-b",
+        "-d",
+        "-f",
+        "-h",
+        "-v",
+        "-l",
+        "-p",
+        "-P",
+        "-Z",
+        "-c",
+        "-e",
+        "-F",
+        "-t"
+      ]
+    },
+
+    "kill-pane": {
+      "_flags": ["-a", "-t"]
+    },
+    "killp": {
+      "_flags": ["-a", "-t"]
+    },
+
+    "list-panes": {
+      "_flags": ["-a", "-s", "-F", "-f", "-t"]
+    },
+    "lsp": {
+      "_flags": ["-a", "-s", "-F", "-f", "-t"]
+    },
+
+    "resize-pane": {
+      "_flags": ["-D", "-L", "-R", "-U", "-Z", "-x", "-y", "-t"]
+    },
+    "resizep": {
+      "_flags": ["-D", "-L", "-R", "-U", "-Z", "-x", "-y", "-t"]
+    },
+
+    "select-pane": {
+      "_flags": [
+        "-D",
+        "-L",
+        "-R",
+        "-U",
+        "-Z",
+        "-l",
+        "-d",
+        "-e",
+        "-P",
+        "-T",
+        "-t",
+        "-M"
+      ]
+    },
+    "selectp": {
+      "_flags": [
+        "-D",
+        "-L",
+        "-R",
+        "-U",
+        "-Z",
+        "-l",
+        "-d",
+        "-e",
+        "-P",
+        "-T",
+        "-t",
+        "-M"
+      ]
+    },
+
+    "swap-pane": {
+      "_flags": ["-d", "-D", "-U", "-s", "-t"]
+    },
+    "swapp": {
+      "_flags": ["-d", "-D", "-U", "-s", "-t"]
+    },
+
+    "break-pane": {
+      "_flags": ["-a", "-d", "-P", "-n", "-s", "-t"]
+    },
+    "breakp": {
+      "_flags": ["-a", "-d", "-P", "-n", "-s", "-t"]
+    },
+
+    "join-pane": {
+      "_flags": ["-b", "-d", "-f", "-h", "-v", "-l", "-p", "-s", "-t"]
+    },
+    "joinp": {
+      "_flags": ["-b", "-d", "-f", "-h", "-v", "-l", "-p", "-s", "-t"]
+    },
+
+    "rotate-window": {
+      "_flags": ["-D", "-U", "-t"]
+    },
+    "rotatew": {
+      "_flags": ["-D", "-U", "-t"]
+    },
+
+    "select-layout": {
+      "_flags": ["-n", "-o", "-E", "-t"]
+    },
+    "selectl": {
+      "_flags": ["-n", "-o", "-E", "-t"]
+    },
+
+    "next-layout": {
+      "_flags": ["-t"]
+    },
+    "nextl": {
+      "_flags": ["-t"]
+    },
+
+    "previous-layout": {
+      "_flags": ["-t"]
+    },
+    "prevl": {
+      "_flags": ["-t"]
+    },
+
+    "pipe-pane": {
+      "_flags": ["-I", "-O", "-o", "-t"]
+    },
+    "pipep": {
+      "_flags": ["-I", "-O", "-o", "-t"]
+    },
+
+    "capture-pane": {
+      "_flags": [
+        "-a",
+        "-b",
+        "-e",
+        "-J",
+        "-N",
+        "-p",
+        "-P",
+        "-q",
+        "-S",
+        "-T",
+        "-t",
+        "-M",
+        "-C"
+      ]
+    },
+    "capturep": {
+      "_flags": [
+        "-a",
+        "-b",
+        "-e",
+        "-J",
+        "-N",
+        "-p",
+        "-P",
+        "-q",
+        "-S",
+        "-T",
+        "-t",
+        "-M",
+        "-C"
+      ]
+    },
+
+    "display-panes": {
+      "_flags": ["-b", "-d", "-t"]
+    },
+    "displayp": {
+      "_flags": ["-b", "-d", "-t"]
+    },
+
+    "send-keys": {
+      "_flags": ["-H", "-K", "-l", "-M", "-N", "-R", "-X", "-c", "-t"]
+    },
+    "send": {
+      "_flags": ["-H", "-K", "-l", "-M", "-N", "-R", "-X", "-c", "-t"]
+    },
+
+    "copy-mode": {
+      "_flags": ["-e", "-H", "-M", "-q", "-u", "-t"]
+    },
+
+    "paste-buffer": {
+      "_flags": ["-d", "-p", "-r", "-s", "-b", "-t"]
+    },
+    "pasteb": {
+      "_flags": ["-d", "-p", "-r", "-s", "-b", "-t"]
+    },
+
+    "save-buffer": {
+      "_flags": ["-a", "-b"]
+    },
+    "saveb": {
+      "_flags": ["-a", "-b"]
+    },
+
+    "show-buffer": {
+      "_flags": ["-b"]
+    },
+    "showb": {
+      "_flags": ["-b"]
+    },
+
+    "delete-buffer": {
+      "_flags": ["-b"]
+    },
+    "deleteb": {
+      "_flags": ["-b"]
+    },
+
+    "list-buffers": {
+      "_flags": ["-F", "-f"]
+    },
+    "lsb": {
+      "_flags": ["-F", "-f"]
+    },
+
+    "set-buffer": {
+      "_flags": ["-a", "-b", "-n", "-w"]
+    },
+    "setb": {
+      "_flags": ["-a", "-b", "-n", "-w"]
+    },
+
+    "choose-buffer": {
+      "_flags": ["-Z", "-F", "-f", "-K", "-N", "-O", "-t"]
+    },
+    "chooseb": {
+      "_flags": ["-Z", "-F", "-f", "-K", "-N", "-O", "-t"]
+    },
+
+    "choose-client": {
+      "_flags": ["-Z", "-F", "-f", "-K", "-N", "-O", "-t"]
+    },
+    "choosec": {
+      "_flags": ["-Z", "-F", "-f", "-K", "-N", "-O", "-t"]
+    },
+
+    "choose-tree": {
+      "_flags": ["-Z", "-F", "-f", "-K", "-N", "-O", "-s", "-w", "-t"]
+    },
+    "chooset": {
+      "_flags": ["-Z", "-F", "-f", "-K", "-N", "-O", "-s", "-w", "-t"]
+    },
+
+    "bind-key": {
+      "_flags": ["-n", "-r", "-T", "-N"]
+    },
+    "bind": {
+      "_flags": ["-n", "-r", "-T", "-N"]
+    },
+
+    "unbind-key": {
+      "_flags": ["-a", "-n", "-T"]
+    },
+    "unbind": {
+      "_flags": ["-a", "-n", "-T"]
+    },
+
+    "list-keys": {
+      "_flags": ["-T", "-N", "-P"]
+    },
+    "lsk": {
+      "_flags": ["-T", "-N", "-P"]
+    },
+
+    "source-file": {
+      "_flags": ["-F", "-n", "-q", "-v"]
+    },
+    "source": {
+      "_flags": ["-F", "-n", "-q", "-v"]
+    },
+
+    "run-shell": {
+      "_flags": ["-b", "-C", "-d", "-t"]
+    },
+    "run": {
+      "_flags": ["-b", "-C", "-d", "-t"]
+    },
+
+    "if-shell": {
+      "_flags": ["-b", "-F", "-t"]
+    },
+    "if": {
+      "_flags": ["-b", "-F", "-t"]
+    },
+
+    "set-option": {
+      "_flags": [
+        "-a",
+        "-g",
+        "-o",
+        "-q",
+        "-u",
+        "-U",
+        "-w",
+        "-p",
+        "-s",
+        "-t",
+        "-F"
+      ]
+    },
+    "set": {
+      "_flags": [
+        "-a",
+        "-g",
+        "-o",
+        "-q",
+        "-u",
+        "-U",
+        "-w",
+        "-p",
+        "-s",
+        "-t",
+        "-F"
+      ]
+    },
+
+    "set-window-option": {
+      "_flags": ["-a", "-g", "-o", "-q", "-u", "-U", "-F", "-t"]
+    },
+    "setw": {
+      "_flags": ["-a", "-g", "-o", "-q", "-u", "-U", "-F", "-t"]
+    },
+
+    "show-options": {
+      "_flags": ["-A", "-H", "-g", "-q", "-v", "-w", "-t", "-s"]
+    },
+    "show": {
+      "_flags": ["-A", "-H", "-g", "-q", "-v", "-w", "-t", "-s"]
+    },
+
+    "show-window-options": {
+      "_flags": ["-g", "-v", "-t"]
+    },
+    "showw": {
+      "_flags": ["-g", "-v", "-t"]
+    },
+
+    "list-clients": {
+      "_flags": ["-F", "-f", "-t"]
+    },
+    "lsc": {
+      "_flags": ["-F", "-f", "-t"]
+    },
+
+    "refresh-client": {
+      "_flags": ["-S", "-t", "-C", "-c", "-f", "-l", "-L", "-R", "-U"]
+    },
+    "refresh": {
+      "_flags": ["-S", "-t", "-C", "-c", "-f", "-l", "-L", "-R", "-U"]
+    },
+
+    "lock-client": {
+      "_flags": ["-t"]
+    },
+    "lockc": {
+      "_flags": ["-t"]
+    },
+
+    "lock-server": {},
+    "lock": {},
+
+    "suspend-client": {
+      "_flags": ["-t"]
+    },
+    "suspendc": {
+      "_flags": ["-t"]
+    },
+
+    "list-commands": {
+      "_flags": ["-F"]
+    },
+    "lscm": {
+      "_flags": ["-F"]
+    },
+
+    "start-server": {},
+    "start": {},
+
+    "server-info": {},
+    "info": {},
+
+    "show-messages": {
+      "_flags": ["-J", "-T", "-t"]
+    },
+    "showmsgs": {
+      "_flags": ["-J", "-T", "-t"]
+    },
+
+    "clock-mode": {
+      "_flags": ["-t"]
+    },
+    "clock": {
+      "_flags": ["-t"]
+    },
+
+    "wait-for": {
+      "_flags": ["-L", "-S", "-U"]
+    },
+    "wait": {
+      "_flags": ["-L", "-S", "-U"]
+    },
+
+    "clear-history": {
+      "_flags": ["-H", "-t"]
+    },
+    "clearhist": {
+      "_flags": ["-H", "-t"]
+    }
+  },
+  "sed": {
+    "_flags": [
+      "-n",
+      "--quiet",
+      "--silent",
+      "-e",
+      "--expression",
+      "-f",
+      "--file",
+      "-i",
+      "--in-place",
+      "-E",
+      "-r",
+      "--regexp-extended",
+      "-s",
+      "--separate",
+      "-u",
+      "--unbuffered",
+      "-z",
+      "--null-data",
+      "-l",
+      "--line-length",
+      "--posix",
+      "--debug",
+      "--sandbox",
+      "--follow-symlinks",
+      "--help",
+      "--version"
+    ]
+  },
+  "awk": {
+    "_flags": [
+      "-F",
+      "--field-separator",
+      "-f",
+      "--file",
+      "-v",
+      "--assign",
+      "-b",
+      "--characters-as-bytes",
+      "-c",
+      "--traditional",
+      "-C",
+      "--copyright",
+      "-d",
+      "--dump-variables",
+      "-e",
+      "--source",
+      "-E",
+      "--exec",
+      "-g",
+      "--gen-pot",
+      "-h",
+      "--help",
+      "-i",
+      "--include",
+      "-l",
+      "--load",
+      "-L",
+      "--lint",
+      "-M",
+      "--bignum",
+      "-n",
+      "--non-decimal-data",
+      "-N",
+      "--use-lc-numeric",
+      "-o",
+      "--pretty-print",
+      "-O",
+      "--optimize",
+      "-p",
+      "--profile",
+      "-P",
+      "--posix",
+      "-r",
+      "--re-interval",
+      "-S",
+      "--sandbox",
+      "-t",
+      "--lint-old",
+      "-V",
+      "--version",
+      "-W",
+      "--"
+    ]
+  },
+  "psql": {
+    "_flags": [
+      "-a",
+      "--echo-all",
+      "-b",
+      "--echo-errors",
+      "-c",
+      "--command",
+      "-d",
+      "--dbname",
+      "-e",
+      "--echo-queries",
+      "-E",
+      "--echo-hidden",
+      "-f",
+      "--file",
+      "-F",
+      "--field-separator",
+      "-h",
+      "--host",
+      "-H",
+      "--html",
+      "-l",
+      "--list",
+      "-L",
+      "--log-file",
+      "-n",
+      "--no-readline",
+      "-o",
+      "--output",
+      "-p",
+      "--port",
+      "-P",
+      "--pset",
+      "-q",
+      "--quiet",
+      "-R",
+      "--record-separator",
+      "-s",
+      "--single-step",
+      "-S",
+      "--single-line",
+      "-t",
+      "--tuples-only",
+      "-T",
+      "--table-attr",
+      "-U",
+      "--username",
+      "-v",
+      "--set",
+      "-V",
+      "--version",
+      "-w",
+      "--no-password",
+      "-W",
+      "--password",
+      "-x",
+      "--expanded",
+      "-z",
+      "--field-separator-zero",
+      "-0",
+      "--record-separator-zero",
+      "--csv",
+      "--help"
+    ]
+  },
+  "mysql": {
+    "_flags": [
+      "-?",
+      "--help",
+      "-B",
+      "--batch",
+      "-C",
+      "--compress",
+      "-D",
+      "--database",
+      "-e",
+      "--execute",
+      "-E",
+      "--vertical",
+      "-f",
+      "--force",
+      "-h",
+      "--host",
+      "-H",
+      "--html",
+      "-i",
+      "--ignore-spaces",
+      "-L",
+      "--skip-line-numbers",
+      "-n",
+      "--unbuffered",
+      "-N",
+      "--skip-column-names",
+      "-p",
+      "--password",
+      "-P",
+      "--port",
+      "-q",
+      "--quick",
+      "-r",
+      "--raw",
+      "-s",
+      "--silent",
+      "-S",
+      "--socket",
+      "-t",
+      "--table",
+      "-T",
+      "--debug-info",
+      "-u",
+      "--user",
+      "-U",
+      "--safe-updates",
+      "-v",
+      "--verbose",
+      "-V",
+      "--version",
+      "-w",
+      "--wait",
+      "-X",
+      "--xml",
+      "--auto-rehash",
+      "--auto-vertical-output",
+      "--binary-as-hex",
+      "--column-names",
+      "--column-type-info",
+      "--comments",
+      "--connect-timeout",
+      "--default-character-set",
+      "--delimiter",
+      "--init-command",
+      "--local-infile",
+      "--max-allowed-packet",
+      "--named-commands",
+      "--no-auto-rehash",
+      "--no-beep",
+      "--no-defaults",
+      "--prompt",
+      "--reconnect",
+      "--secure-auth",
+      "--show-warnings",
+      "--sigint-ignore",
+      "--ssl-ca",
+      "--ssl-cert",
+      "--ssl-key",
+      "--ssl-mode",
+      "--tee"
+    ]
+  },
+  "ripgrep": {
+    "_flags": [
+      "-i",
+      "--ignore-case",
+      "-S",
+      "--smart-case",
+      "-s",
+      "--case-sensitive",
+      "-F",
+      "--fixed-strings",
+      "-w",
+      "--word-regexp",
+      "-x",
+      "--line-regexp",
+      "-v",
+      "--invert-match",
+      "-e",
+      "--regexp",
+      "-f",
+      "--file",
+      "-P",
+      "--pcre2",
+      "-U",
+      "--multiline",
+      "-z",
+      "--search-zip",
+      "-a",
+      "--text",
+      "-L",
+      "--follow",
+      "-u",
+      "--unrestricted",
+      "--hidden",
+      "--no-ignore",
+      "--no-ignore-vcs",
+      "--no-ignore-parent",
+      "--no-ignore-global",
+      "--no-ignore-dot",
+      "-t",
+      "--type",
+      "-T",
+      "--type-not",
+      "-g",
+      "--glob",
+      "--iglob",
+      "-l",
+      "--files-with-matches",
+      "-c",
+      "--count",
+      "-n",
+      "--line-number",
+      "-o",
+      "--only-matching",
+      "-A",
+      "--after-context",
+      "-B",
+      "--before-context",
+      "-C",
+      "--context",
+      "-M",
+      "--max-columns",
+      "--column",
+      "--heading",
+      "--no-heading",
+      "--vimgrep",
+      "--json",
+      "--stats",
+      "--files",
+      "--type-list",
+      "-j",
+      "--threads",
+      "-m",
+      "--max-count",
+      "--max-depth",
+      "-q",
+      "--quiet",
+      "--no-messages",
+      "--passthru",
+      "-r",
+      "--replace",
+      "--sort",
+      "--sortr",
+      "-0",
+      "--null",
+      "--help",
+      "--version"
+    ]
+  },
+  "fd": {
+    "_flags": [
+      "-H",
+      "--hidden",
+      "-I",
+      "--no-ignore",
+      "-u",
+      "--unrestricted",
+      "-E",
+      "--exclude",
+      "-e",
+      "--extension",
+      "-t",
+      "--type",
+      "-d",
+      "--max-depth",
+      "--min-depth",
+      "-s",
+      "--case-sensitive",
+      "-i",
+      "--ignore-case",
+      "-g",
+      "--glob",
+      "-F",
+      "--fixed-strings",
+      "-a",
+      "--absolute-path",
+      "-L",
+      "--follow",
+      "-p",
+      "--full-path",
+      "-l",
+      "--list-details",
+      "-c",
+      "--color",
+      "-j",
+      "--threads",
+      "-0",
+      "--print0",
+      "-x",
+      "--exec",
+      "-X",
+      "--exec-batch",
+      "--batch-size",
+      "--ignore-file",
+      "--no-ignore-vcs",
+      "--no-ignore-parent",
+      "--no-global-ignore-file",
+      "--one-file-system",
+      "--prune",
+      "--changed-within",
+      "--changed-before",
+      "--owner",
+      "--size",
+      "-S",
+      "--size",
+      "--max-results",
+      "--max-buffer-time",
+      "--strip-cwd-prefix",
+      "--help",
+      "--version"
+    ]
+  },
+  "bat": {
+    "_flags": [
+      "-l",
+      "--language",
+      "--list-languages",
+      "-m",
+      "--map-syntax",
+      "--theme",
+      "--list-themes",
+      "--style",
+      "-p",
+      "--plain",
+      "-n",
+      "--number",
+      "-A",
+      "--show-all",
+      "-r",
+      "--line-range",
+      "-H",
+      "--highlight-line",
+      "--color",
+      "--italic-text",
+      "--decorations",
+      "--paging",
+      "--pager",
+      "--wrap",
+      "--terminal-width",
+      "--tabs",
+      "--squeeze-blank",
+      "--squeeze-limit",
+      "--file-name",
+      "--diff",
+      "--diff-context",
+      "--binary",
+      "--no-config",
+      "--config-file",
+      "--config-dir",
+      "--cache-dir",
+      "--no-paging",
+      "--help",
+      "--version"
+    ]
+  },
+  "fzf": {
+    "_flags": [
+      "-m",
+      "--multi",
+      "-x",
+      "--extended",
+      "-e",
+      "--exact",
+      "-i",
+      "+i",
+      "-n",
+      "--nth",
+      "--query",
+      "--filter",
+      "--expect",
+      "--print-query",
+      "--select-1",
+      "--exit-0",
+      "--read0",
+      "--print0",
+      "--no-clear",
+      "--height",
+      "--layout",
+      "--reverse",
+      "--border",
+      "--info",
+      "--header",
+      "--prompt",
+      "--pointer",
+      "--marker",
+      "--color",
+      "--no-color",
+      "--preview",
+      "--preview-window",
+      "--bind",
+      "--history",
+      "--history-file",
+      "--cycle",
+      "--keep-right",
+      "--no-hscroll",
+      "--hscroll-off",
+      "--jump-labels",
+      "--tabstop",
+      "--no-mouse",
+      "--no-height",
+      "--no-preview",
+      "--no-bind",
+      "--no-query",
+      "--no-filter",
+      "--no-expect",
+      "--no-print-query",
+      "--no-select-1",
+      "--no-exit-0",
+      "--no-read0",
+      "--no-print0",
+      "--help",
+      "--version"
+    ]
+  },
+  "jq": {
+    "_flags": [
+      "-r",
+      "--raw-output",
+      "-j",
+      "--join-output",
+      "-e",
+      "--exit-status",
+      "-C",
+      "--color-output",
+      "-M",
+      "--monochrome-output",
+      "-a",
+      "--ascii-output",
+      "-S",
+      "--sort-keys",
+      "-c",
+      "--compact-output",
+      "--tab",
+      "--indent",
+      "--arg",
+      "--argjson",
+      "--slurpfile",
+      "--rawfile",
+      "--args",
+      "--jsonargs",
+      "-n",
+      "--null-input",
+      "-s",
+      "--slurp",
+      "-R",
+      "--raw-input",
+      "--stream",
+      "--seq",
+      "-f",
+      "--from-file",
+      "-L",
+      "--library-path",
+      "--run-tests",
+      "--help",
+      "--version"
+    ]
+  },
+  "helm": {
+    "_global": [
+      "--debug",
+      "--kube-context",
+      "--kubeconfig",
+      "--namespace",
+      "-n",
+      "--registry-config",
+      "--repository-cache",
+      "--repository-config",
+      "--help",
+      "--version"
+    ],
+    "create": {},
+    "lint": {},
+    "package": {},
+    "template": {
+      "_flags": [
+        "-f",
+        "--values",
+        "--set",
+        "--set-string",
+        "--set-file",
+        "--set-json",
+        "--set-literal",
+        "--namespace",
+        "-n",
+        "--show-only",
+        "--output-dir",
+        "--debug",
+        "--api-versions",
+        "--kube-version",
+        "--include-crds",
+        "--skip-tests",
+        "--help"
+      ]
+    },
+    "repo": {
+      "add": {
+        "_flags": [
+          "--username",
+          "--password",
+          "--pass-credentials",
+          "--force-update",
+          "--insecure-skip-tls-verify",
+          "--ca-file",
+          "--cert-file",
+          "--key-file",
+          "--help"
+        ]
+      },
+      "remove": {},
+      "update": {},
+      "list": {},
+      "index": {}
+    },
+    "search": {
+      "repo": {
+        "_flags": [
+          "--versions",
+          "--version",
+          "--devel",
+          "--regexp",
+          "-r",
+          "--output",
+          "-o",
+          "--max-col-width",
+          "--help"
+        ]
+      },
+      "hub": {
+        "_flags": ["--max-col-width", "--endpoint", "--help"]
+      }
+    },
+    "install": {
+      "_flags": [
+        "--generate-name",
+        "--name-template",
+        "--version",
+        "--repo",
+        "--devel",
+        "-f",
+        "--values",
+        "--set",
+        "--set-string",
+        "--set-file",
+        "--set-json",
+        "--set-literal",
+        "--namespace",
+        "-n",
+        "--create-namespace",
+        "--dry-run",
+        "--debug",
+        "--wait",
+        "--timeout",
+        "--atomic",
+        "--dependency-update",
+        "--replace",
+        "--help"
+      ]
+    },
+    "upgrade": {
+      "_flags": [
+        "--install",
+        "-i",
+        "-f",
+        "--values",
+        "--set",
+        "--set-string",
+        "--set-file",
+        "--set-json",
+        "--set-literal",
+        "--namespace",
+        "-n",
+        "--create-namespace",
+        "--atomic",
+        "--cleanup-on-fail",
+        "--force",
+        "--reuse-values",
+        "--reset-values",
+        "--history-max",
+        "--dry-run",
+        "--debug",
+        "--wait",
+        "--timeout",
+        "--dependency-update",
+        "--help"
+      ]
+    },
+    "rollback": {
+      "_flags": [
+        "--cleanup-on-fail",
+        "--force",
+        "--wait",
+        "--timeout",
+        "--debug",
+        "--help"
+      ]
+    },
+    "history": {
+      "_flags": ["--max", "--output", "-o", "--help"]
+    },
+    "list": {
+      "_flags": [
+        "-A",
+        "--all-namespaces",
+        "--deployed",
+        "--failed",
+        "--pending",
+        "--uninstalled",
+        "--uninstalling",
+        "--superseded",
+        "--all",
+        "-a",
+        "--short",
+        "-q",
+        "--output",
+        "-o",
+        "--filter",
+        "-f",
+        "--max",
+        "-m",
+        "--offset",
+        "--help"
+      ]
+    },
+    "get": {
+      "values": {},
+      "manifest": {},
+      "all": {},
+      "hooks": {},
+      "notes": {}
+    },
+    "status": {},
+    "uninstall": {
+      "_flags": [
+        "--dry-run",
+        "--keep-history",
+        "--no-hooks",
+        "--wait",
+        "--timeout",
+        "--debug",
+        "--help"
+      ]
+    },
+    "dependency": {
+      "list": {},
+      "update": {},
+      "build": {}
+    },
+    "env": {},
+    "plugin": {
+      "install": {},
+      "list": {},
+      "uninstall": {},
+      "update": {}
+    },
+    "completion": {},
+    "version": {}
   }
 }
