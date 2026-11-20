@@ -48,7 +48,6 @@ COMMAND_TREE_PATH = os.path.join(os.path.dirname(__file__), "data", "commands.js
 
 
 def _command_tree() -> dict:
-    """Subcommand/flag data (157KB of JSON), parsed on first use."""
     global COMMAND_TREE
     if COMMAND_TREE is None:
         COMMAND_TREE = {}
@@ -58,7 +57,7 @@ def _command_tree() -> dict:
                 COMMAND_TREE = json.load(f)
         except (OSError, ValueError):
             pass
-    return COMMAND_TREE
+    return COMMAND_TREE or {}
 
 
 def _module_names() -> set[str]:
