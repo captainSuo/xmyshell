@@ -1,4 +1,5 @@
-from importlib.metadata import version
+import os
+import sys
 
 # ANSI color codes
 RESET   = "\033[0m"
@@ -12,9 +13,64 @@ MAGENTA = "\033[95m"
 
 NAME            = "xmyshell"
 DISPLAY_NAME    = "XmyShell"
-VERSION         = version(NAME)
 AUTHOR          = "CaptainSuo"
 EMAIL           = "captainsuo@outlook.com"
+
+
+def _version_from_metadata() -> str | None:
+    """Read VERSION straight from the installed metadata file.
+
+    `importlib.metadata` costs 60-90ms on import because it drags in
+    `email`, `zipfile` and friends, and this module is imported on every
+    startup just to print the banner. Reading one small file is enough;
+    anything unusual (no metadata, several of them) falls back.
+    """
+    roots = [os.path.dirname(os.path.dirname(os.path.abspath(__file__)))]
+    roots += [entry for entry in sys.path if entry]
+
+    candidates: list[str] = []
+    seen: set[str] = set()
+    for root in roots:
+        root = os.path.abspath(root)
+        if root in seen:
+            continue
+        seen.add(root)
+        try:
+            names = os.listdir(root)
+        except OSError:
+            continue
+        for name in names:
+            if name.startswith(f"{NAME}-") and name.endswith(".dist-info"):
+                candidates.append(os.path.join(root, name, "METADATA"))
+            elif name == f"{NAME}.egg-info":
+                candidates.append(os.path.join(root, name, "PKG-INFO"))
+        if len(candidates) > 1:
+            return None
+
+    if len(candidates) != 1:
+        return None
+
+    try:
+        with open(candidates[0], "r", encoding="utf-8", errors="replace") as f:
+            for line in f:
+                if line.startswith("Version:"):
+                    return line[len("Version:"):].strip() or None
+                if not line.strip():  # end of the header block
+                    return None
+    except OSError:
+        pass
+    return None
+
+
+def _installed_version() -> str:
+    version = _version_from_metadata()
+    if version is not None:
+        return version
+    from importlib.metadata import version as metadata_version
+    return metadata_version(NAME)
+
+
+VERSION         = _installed_version()
 WELCOME_MESSAGE = f"""{BOLD}{BLUE}{DISPLAY_NAME} {CYAN}{VERSION}{RESET}"""
 
 HELP_MESSAGE = f"""{BOLD}{CYAN}

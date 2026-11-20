@@ -1,21 +1,22 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Generator
 import os
 import shlex
 import sys
 import re
 import time
-import json
 import keyword
-import pkgutil
 from string import whitespace
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from prompt_toolkit.document import Document
 from .environment import localspace, aliases
 from .utils import truncate
-from pathlib import Path
 
 MAX_DISPLAY_LEN = 24
 MAX_META_LEN = 12
+
+WIN_EXEC_EXTS = frozenset({".exe", ".bat", ".cmd", ".ps1", ".py", ".com"})
+NON_EXEC_SUFFIXES = (".dll", ".pyd", ".pyc", ".sys", ".msi", ".drv")
+POSIX_NON_EXEC_SUFFIXES = (".so", ".a", ".o")
 
 BUILTINS = ("cd", "cp", "cat", "echo", "exit", "import", "ls", "print", "pyexec", "pwd", "source",
             "clear", "grep", "find", "from", "mkdir", "rm", "reload", "mv", "help",
@@ -42,61 +43,85 @@ COMMON = (
 
 KEYWORDS = list(keyword.kwlist)
 
-COMMAND_TREE = {}
-json_path = Path(__file__).parent / "data" / "commands.json"
-try:
-    with open(json_path, "r", encoding="utf-8") as f:
-        COMMAND_TREE = json.load(f)
-except (FileNotFoundError, json.JSONDecodeError):
-    pass
+COMMAND_TREE: dict | None = None
+COMMAND_TREE_PATH = os.path.join(os.path.dirname(__file__), "data", "commands.json")
+
+
+def _command_tree() -> dict:
+    """Subcommand/flag data (157KB of JSON), parsed on first use."""
+    global COMMAND_TREE
+    if COMMAND_TREE is None:
+        COMMAND_TREE = {}
+        try:
+            import json
+            with open(COMMAND_TREE_PATH, "r", encoding="utf-8") as f:
+                COMMAND_TREE = json.load(f)
+        except (OSError, ValueError):
+            pass
+    return COMMAND_TREE
+
+
+def _module_names() -> set[str]:
+    """Module names offered after `import` / `from` (pkgutil is not cheap)."""
+    import pkgutil
+    return set(sys.builtin_module_names) | {m.name for m in pkgutil.iter_modules()}
+
 
 class ShellCompleter(Completer):
 
-    def __init__(self, cache_duration: int = 3) -> None:
+    def __init__(self, cache_duration: int = 30) -> None:
         self._cache: list[str] = []
-        self._cache_time: float = 0
+        self._cache_time: float = 0.0
         self._cache_duration = cache_duration
-        self._get_commands()
+        self._loaded = False
+        # The PATH scan is deferred to the first completion request: it costs
+        # tens of milliseconds and nothing needs it to show the prompt.
 
     def _strip_ext(self, name: str) -> str:
         if os.name == "nt":
-            ext = os.path.splitext(name)[1].lower()
-            if ext in {".exe", ".bat", ".cmd", ".ps1", ".py", ".com"}:
-                return os.path.splitext(name)[0]
+            stem, ext = os.path.splitext(name)
+            if ext in WIN_EXEC_EXTS:
+                return stem
         return name
 
     def _get_commands(self) -> list[str]:
-        now = time.time()
-        if self._cache and now - self._cache_time < self._cache_duration:
+        now = time.monotonic()
+        if self._loaded and now - self._cache_time < self._cache_duration:
             return self._cache
 
         commands: set[str] = set(BUILTINS)
         for path in os.environ.get("PATH", "").split(os.pathsep):
-            if not path or not os.path.isdir(path) or path.startswith("/mnt/"):
+            if not path or path.startswith("/mnt/"):
                 continue
             try:
-                for name in os.listdir(path):
-                    if os.name == "nt":
-                        name = name.lower()
-                    full = os.path.join(path, name)
-                    if os.path.isfile(full) and self._is_executable(name, full):
+                with os.scandir(path) as entries:
+                    for entry in entries:
+                        name = entry.name.lower() if os.name == "nt" else entry.name
+                        if not self._is_executable(name):
+                            continue
+                        try:
+                            if not entry.is_file():
+                                continue
+                        except OSError:
+                            continue
+                        if os.name != "nt" and not os.access(entry.path, os.X_OK):
+                            continue
                         commands.add(self._strip_ext(name))
-            except (OSError, PermissionError):
+            except OSError:
                 continue
 
         self._cache = self._sort_commands(commands)
         self._cache_time = now
+        self._loaded = True
         return self._cache
 
-    def _is_executable(self, name: str, full_path: str) -> bool:
-        if name.endswith((".dll", ".pyd", ".pyc", ".sys", ".msi", ".drv")):
+    def _is_executable(self, name: str) -> bool:
+        """Name-only filter, applied before any filesystem access."""
+        if name.endswith(NON_EXEC_SUFFIXES):
             return False
-
         if os.name == "nt":
-            ext = os.path.splitext(name)[1].lower()
-            return ext in {".exe", ".bat", ".cmd", ".ps1", ".py", ".com"}
-
-        return os.access(full_path, os.X_OK) and not name.endswith((".so", ".a", ".o"))
+            return os.path.splitext(name)[1] in WIN_EXEC_EXTS
+        return not name.endswith(POSIX_NON_EXEC_SUFFIXES)
 
     def _inside_braces(self, text: str) -> bool:
         count = 0
@@ -359,7 +384,7 @@ class ShellCompleter(Completer):
         except ValueError:
             parts = text.split()
         if not parts: return
-        sub_cmd = COMMAND_TREE.get(parts[0])
+        sub_cmd = _command_tree().get(parts[0])
         if not sub_cmd: return
         global_flags: set[str] = set()
         if sub_cmd.get("_global"):
@@ -464,8 +489,7 @@ class ShellCompleter(Completer):
                 if not lstripped.endswith(parts[-1]):
                     parts.append("")
                 elif len(parts) == 2:
-                    mods = set(sys.builtin_module_names)
-                    mods |= {m.name for m in pkgutil.iter_modules()}
+                    mods = _module_names()
                     for name in sorted(mods):
                         if not name.startswith(parts[-1]):
                             continue
@@ -488,8 +512,7 @@ class ShellCompleter(Completer):
                 if not lstripped.endswith(parts[-1]):
                     parts.append("")
                 elif len(parts) == 2:
-                    mods = set(sys.builtin_module_names)
-                    mods |= {m.name for m in pkgutil.iter_modules()}
+                    mods = _module_names()
                     for name in sorted(mods):
                         if not name.startswith(parts[-1]):
                             continue

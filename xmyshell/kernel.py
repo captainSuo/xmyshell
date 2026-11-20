@@ -7,7 +7,6 @@ import runpy
 import subprocess
 import signal
 import shlex
-from webbrowser import get
 from .environment import localspace, aliases, xmyshell_alias, xmyshell_unalias, SHELL_CMD
 from .utils import pywarning, pyerror, getcwd
 from .meta import HELP_MESSAGE

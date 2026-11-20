@@ -4,30 +4,35 @@ _start_time = time_ns()
 
 
 import os
-from prompt_toolkit.application import get_app
-from prompt_toolkit.styles import Style
-from prompt_toolkit import HTML, PromptSession
-from prompt_toolkit.history import FileHistory
-from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from .meta import WELCOME_MESSAGE
 from .environment import localspace
-from .keybindings import (
-    bindings,
-    on_cursor_position_changed,
-    on_text_changed,
-    clean_buffer,
-)
-from .init import xmyshell_init
-from .kernel import pyeval, xmyshell
-from .injection import inject
 
 
 def xmyshell_main() -> None:
+    # Startup is import-bound, and prompt_toolkit is by far the most expensive
+    # import we have. Everything below is imported as late as possible so that
+    # initialization (and the welcome message) can happen first.
+    from .init import xmyshell_init, xmyshell_init_completer
+
     xmyshell_init()
 
     if localspace.get("SHOW_WELCOME"):
         print(WELCOME_MESSAGE)
-        print(f"Initialized with {(time_ns() - _start_time) // 1_000_000}ms.")
+
+    xmyshell_init_completer()
+
+    from prompt_toolkit import HTML, PromptSession
+    from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
+    from prompt_toolkit.history import FileHistory
+    from prompt_toolkit.styles import Style
+    from .injection import inject
+    from .kernel import pyeval, xmyshell
+    from .keybindings import (
+        bindings,
+        clean_buffer,
+        on_cursor_position_changed,
+        on_text_changed,
+    )
 
     session = PromptSession(
         history=FileHistory(os.path.expanduser("~/.xmyshell/history.txt")),
@@ -40,6 +45,9 @@ def xmyshell_main() -> None:
     )
     session.default_buffer.on_cursor_position_changed += on_cursor_position_changed
     session.default_buffer.on_text_changed += on_text_changed
+
+    if localspace.get("SHOW_WELCOME"):
+        print(f"Initialized with {(time_ns() - _start_time) // 1_000_000}ms.")
 
     try:
         while True:
