@@ -1,6 +1,20 @@
 # Change Log
 
 
+## [0.2.25] 2026-11-20
+### Improved
+- Faster startup: `prompt_toolkit` is imported lazily, so `--version`, `--help` and
+  `import xmyshell` no longer load it (~500ms -> ~135ms).
+- Read the version from package metadata instead of importing `importlib.metadata`.
+- Scan `PATH` with `os.scandir` and defer the scan to the first completion request;
+  cache the command list for 30s instead of 3s.
+- Print the welcome message before loading `prompt_toolkit`.
+- Load `commands.json`, `json` and `pkgutil` only when completion needs them.
+
+### Fixed
+- Fix type checker warnings in `completer`.
+
+
 ## [0.2.24] 2026-11-08
 ### Added
 - Add completions for a few programs.
