@@ -1,6 +1,20 @@
 # Change Log
 
 
+## [0.2.26] 2026-11-20
+### Improved
+- Path completion is now case-insensitive: typing `readme` also completes
+  `README.md` and `ReadMe.md`, and vice versa.
+- Faster path completion: entries already matched by prefix are looked up in a set
+  instead of rescanning the list, so long directories no longer cost an extra pass.
+
+### Fixed
+- Fix path completion for paths that use backslashes on Windows, e.g.
+  `C:\Users\me\sub`. The tokenizer treated `\` as an escape character and
+  dropped every separator, so such paths completed to nothing. Quoted paths
+  containing a space, such as `"dir with space/sub`, still complete.
+
+
 ## [0.2.25] 2026-11-20
 ### Improved
 - Faster startup: `prompt_toolkit` is imported lazily, so `--version`, `--help` and
