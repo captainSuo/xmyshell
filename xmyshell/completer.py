@@ -199,15 +199,16 @@ class ShellCompleter(Completer):
         else:
             path = os.path.expanduser(last)
         dirname = os.path.dirname(path) or "."
-        prefix = os.path.basename(path).strip('"\'')
+        prefix = os.path.basename(path).strip('"\'').lower()
 
         try:
             entries = sorted(os.listdir(dirname))
         except OSError:
             return
 
-        exact = [e for e in entries if e.startswith(prefix)]
-        fuzzy = [e for e in entries if not e.startswith(prefix) and prefix in e]
+        exact = [e for e in entries if e.lower().startswith(prefix)]
+        exact_set = set(exact)
+        fuzzy = [e for e in entries if not e in exact_set and prefix in e.lower()]
 
         budget = max_results - len(exact[:max_results])
         selected = exact[:max_results] + fuzzy[:max(0, budget)]
