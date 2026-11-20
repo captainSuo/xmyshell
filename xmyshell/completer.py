@@ -178,28 +178,29 @@ class ShellCompleter(Completer):
         prefix = os.path.basename(path).strip('"\'')
 
         try:
-            matches: list[str] = []
-            for item in os.listdir(dirname):
-                if item.startswith(prefix):
-                    matches.append(item)
-                    if len(matches) >= max_results:
-                        break
-
-            for item in sorted(matches):
-                full = os.path.join(dirname, item)
-                is_dir = os.path.isdir(full)
-                if ' ' in item and not in_string:
-                    name = f'"{item}"'
-                else:
-                    name = item
-                yield Completion(
-                    name,
-                    display=truncate(item, MAX_DISPLAY_LEN),
-                    start_position=-len(prefix),
-                    display_meta="directory" if is_dir else "file",
-                )
+            entries = sorted(os.listdir(dirname))
         except OSError:
-            pass
+            return
+
+        exact = [e for e in entries if e.startswith(prefix)]
+        fuzzy = [e for e in entries if not e.startswith(prefix) and prefix in e]
+
+        budget = max_results - len(exact[:max_results])
+        selected = exact[:max_results] + fuzzy[:max(0, budget)]
+
+        for item in selected:
+            full = os.path.join(dirname, item)
+            is_dir = os.path.isdir(full)
+            if ' ' in item and not in_string:
+                name = f'"{item}"'
+            else:
+                name = item
+            yield Completion(
+                name,
+                display=truncate(item, MAX_DISPLAY_LEN),
+                start_position=-len(prefix),
+                display_meta="directory" if is_dir else "file",
+            )
 
     @staticmethod
     def _last_identifier(text: str) -> str:
