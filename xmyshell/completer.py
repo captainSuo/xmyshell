@@ -146,6 +146,10 @@ class ShellCompleter(Completer):
     def _path_completions(self, text: str, max_results: int = 100, in_string: bool=False):
         if text and text[-1] in whitespace: return
 
+        # On Windows a backslash is a path separator (`C:\Users\me`), not an
+        # escape character, so it must never consume the following character.
+        escape = os.name != "nt"
+
         def last_token_raw(text: str) -> tuple[str, bool]:
             quote = None
             start = 0
@@ -155,21 +159,21 @@ class ShellCompleter(Completer):
                 if quote:
                     if ch == quote:
                         quote = None
-                    elif ch == "\\" and quote == '"':
+                    elif ch == "\\" and quote == '"' and escape:
                         i += 1
                 else:
                     if ch in ("'", '"'):
                         quote = ch
                     elif ch in " \t":
                         start = i + 1
-                    elif ch == "\\":
+                    elif ch == "\\" and escape:
                         i += 1
                 i += 1
             return text[start:], quote is not None
 
         def split_lenient(s: str) -> list[str] | None:
             try:
-                return shlex.split(s)
+                return shlex.split(s, posix=escape)
             except ValueError:
                 pass
             quote = None
@@ -178,14 +182,14 @@ class ShellCompleter(Completer):
                 ch = s[i]
                 if quote:
                     if ch == quote: quote = None
-                    elif ch == '\\' and quote == '"': i += 1
+                    elif ch == '\\' and quote == '"' and escape: i += 1
                 else:
                     if ch in ('"', "'"): quote = ch
-                    elif ch == '\\': i += 1
+                    elif ch == '\\' and escape: i += 1
                 i += 1
             if quote:
                 try:
-                    return shlex.split(s + quote)
+                    return shlex.split(s + quote, posix=escape)
                 except ValueError:
                     pass
             return None
@@ -195,7 +199,12 @@ class ShellCompleter(Completer):
         if last == '~': return  # don't remove this
         parts = split_lenient(last)
         if parts:
-            path = os.path.expanduser(parts[0])
+            token = parts[0]
+            # With posix=False quotes are kept verbatim ('"a dir"'): drop the
+            # surrounding pair so the quoted path resolves on disk.
+            if not escape and len(token) >= 2 and token[0] == token[-1] and token[0] in ('"', "'"):
+                token = token[1:-1]
+            path = os.path.expanduser(token)
         else:
             path = os.path.expanduser(last)
         dirname = os.path.dirname(path) or "."
