@@ -26,10 +26,11 @@ def getlogin() -> str:
         except Exception:
             return os.environ.get("USER", os.environ.get("USERNAME", "unknown"))
 
-def getcwd() -> str:
-    if os.name == "nt":
+if os.name == "nt":
+    def getcwd() -> str:
         return os.getcwd().replace('\\', '/')
-    else:
+else:
+    def getcwd() -> str:
         return os.getcwd()
 
 HOME_DIR = os.path.expanduser("~").replace('\\', '/')
