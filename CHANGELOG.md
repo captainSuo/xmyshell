@@ -1,6 +1,21 @@
 # Change Log
 
 
+## [0.2.27] 2026-11-21
+### Improved
+- Define `getcwd()` once per platform at import time instead of checking the
+  platform on every call.
+
+### Fixed
+- Restore case-sensitive path prefix matching. Prefix matches rank before fuzzy
+  matches again, so typing `readme` no longer promotes `README.md` over an exact
+  `readme` match; only the fuzzy substring fallback ignores case.
+- Completion now treats `ls`, `cp`, `echo`, `grep`, `find`, `mkdir` and `rm` as
+  external programs instead of shell builtins.
+- Add missing type declarations for `ans`, `shell_prompt`, `shell_rprompt`,
+  `prompt_placeholder` and `prompt_style` to the bundled stubs.
+
+
 ## [0.2.26] 2026-11-20
 ### Improved
 - Path completion is now case-insensitive: typing `readme` also completes
