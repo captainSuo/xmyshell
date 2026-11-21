@@ -1,5 +1,8 @@
 # XmyShell built-in names
 
+from typing import Any
+
+
 def getlogin() -> str: ...
 def getcwd() -> str: ...
 def dirname(p: str) -> str: ...
@@ -15,3 +18,8 @@ exit_code: int
 exec_duration: int
 last_error: Exception | None
 last_traceback: str | None
+ans: Any
+shell_prompt: str
+shell_rprompt: str
+prompt_placeholder: str
+prompt_style: dict[str, str]
