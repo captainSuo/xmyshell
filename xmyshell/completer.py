@@ -18,11 +18,11 @@ WIN_EXEC_EXTS = frozenset({".exe", ".bat", ".cmd", ".ps1", ".py", ".com"})
 NON_EXEC_SUFFIXES = (".dll", ".pyd", ".pyc", ".sys", ".msi", ".drv")
 POSIX_NON_EXEC_SUFFIXES = (".so", ".a", ".o")
 
-BUILTINS = ("cd", "cp", "cat", "echo", "exit", "import", "ls", "print", "pyexec", "pwd", "source",
-            "clear", "grep", "find", "from", "mkdir", "rm", "reload", "mv", "help",
-            "update", "alias", "unalias")
+BUILTINS = ("cd", "exit", "import", "print", "pyexec", "pwd", "source",
+            "clear", "from", "reload", "mv", "help", "update", "alias", "unalias")
 
 COMMON = (
+    "ls", "cat", "cp", "echo", "grep", "find", "mkdir", "rm",
     "python", "python3", "pip", "pip3", "git", "conda", "uv",
     "ssh", "scp", "curl", "wget", "winget", "docker",
     "vim", "nvim", "nano", "code",
