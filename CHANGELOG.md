@@ -1,6 +1,18 @@
 # Change Log
 
 
+## [Unreleased]
+### Improved
+- Every completer now supports the same fuzzy matching as path completion:
+  prefix matches are listed first, then case-insensitive substring matches.
+  This covers commands, aliases, subcommands, flags, environment variables,
+  modules, Python names and attributes.
+- Route all completers through shared fuzzy-matching and completion helpers, so
+  the matching and highlighting logic lives in one place.
+- The matched part of a completion is highlighted with the theme's
+  `completion-highlight` color.
+
+
 ## [0.2.27] 2026-11-21
 ### Improved
 - Define `getcwd()` once per platform at import time instead of checking the

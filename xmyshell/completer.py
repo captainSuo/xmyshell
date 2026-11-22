@@ -1,4 +1,4 @@
-from collections.abc import Generator
+from collections.abc import Callable, Generator, Iterable
 import os
 import shlex
 import sys
@@ -42,7 +42,7 @@ def _display(name: str, matched: str, limit: int = MAX_DISPLAY_LEN) -> StyleAndT
     rel_start = start - visible_start
     rel_end = rel_start + len(matched)
 
-    HIGHLIGHT_STYLE = "bold underline"
+    HIGHLIGHT_STYLE = "class:completion-highlight"
     PLAIN_STYLE = ""
 
     fragments: StyleAndTextTuples = []
@@ -56,6 +56,72 @@ def _display(name: str, matched: str, limit: int = MAX_DISPLAY_LEN) -> StyleAndT
     if visible_end < len(name):
         fragments.append((PLAIN_STYLE, "..."))
     return fragments
+
+
+MAX_FUZZY_RESULTS = 100
+
+
+def _match_rank(candidate: str, prefix: str) -> int:
+    """Rank how well `candidate` matches `prefix`.
+
+    0 means the candidate starts with the prefix (the best match), 1 means it
+    only contains the prefix somewhere else, and -1 means it does not match.
+    Prefix matching stays case-sensitive, like on the filesystem; only the
+    substring fallback ignores case.
+    """
+    if candidate.startswith(prefix):
+        return 0
+    if prefix and prefix.lower() in candidate.lower():
+        return 1
+    return -1
+
+
+def _fuzzy_matches(
+    candidates: Iterable[str],
+    prefix: str,
+    *,
+    max_results: int | None = None,
+    max_fuzzy: int = MAX_FUZZY_RESULTS,
+) -> list[str]:
+    """Return prefix matches first, followed by substring matches.
+
+    `max_fuzzy` caps the substring matches so a short prefix cannot flood the
+    menu; prefix matches are never dropped. When `max_results` is given it caps
+    the combined result instead (used by path completion).
+    """
+    exact: list[str] = []
+    fuzzy: list[str] = []
+    for candidate in candidates:
+        rank = _match_rank(candidate, prefix)
+        if rank == 0:
+            exact.append(candidate)
+        elif rank == 1:
+            fuzzy.append(candidate)
+
+    if max_results is not None:
+        exact = exact[:max_results]
+        fuzzy = fuzzy[: max(0, max_results - len(exact))]
+    else:
+        fuzzy = fuzzy[:max_fuzzy]
+    return exact + fuzzy
+
+
+def _completions(
+    candidates: Iterable[str],
+    prefix: str,
+    meta: str | Callable[[str], str],
+    *,
+    start_position: int | None = None,
+) -> Generator[Completion, None, None]:
+    """Yield fuzzy completions for `candidates` sharing one display format."""
+    start = -len(prefix) if start_position is None else start_position
+    for name in _fuzzy_matches(candidates, prefix):
+        yield Completion(
+            name,
+            start_position=start,
+            display=_display(name, prefix),
+            display_meta=meta(name) if callable(meta) else meta,
+        )
 
 
 WIN_EXEC_EXTS = frozenset({".exe", ".bat", ".cmd", ".ps1", ".py", ".com"})
@@ -259,13 +325,7 @@ class ShellCompleter(Completer):
         except OSError:
             return
 
-        exact = [e for e in entries if e.startswith(prefix)]
-        exact_set = set(exact)
-        prefix_lower = prefix.lower()
-        fuzzy = [e for e in entries if not e in exact_set and prefix_lower in e.lower()]
-
-        budget = max_results - len(exact[:max_results])
-        selected = exact[:max_results] + fuzzy[:max(0, budget)]
+        selected = _fuzzy_matches(entries, prefix, max_results=max_results)
 
         for item in selected:
             full = os.path.join(dirname, item)
@@ -295,15 +355,7 @@ class ShellCompleter(Completer):
         if not last_word:
             return
 
-        candidates = set(os.environ)
-        for name in sorted(candidates):
-            if name.startswith(last_word):
-                yield Completion(
-                    name,
-                    start_position=-len(last_word),
-                    display=_display(name, last_word),
-                    display_meta="environment"
-                )
+        yield from _completions(sorted(os.environ), last_word, "environment")
 
     def _python_completion(self, text: str):
 
@@ -384,23 +436,19 @@ class ShellCompleter(Completer):
                 prefix = parts[-1]
                 attrs = dir(obj)
                 attrs.sort(key=lambda x: (x.startswith('_'), x))
-                for attr in attrs:
-                    if attr.startswith(prefix):
-                        try:
-                            value = getattr(obj, attr)
-                            meta = (
-                                "method"
-                                if callable(value)
-                                else truncate(type(value).__name__, MAX_META_LEN)
-                            )
-                        except Exception:
-                            meta = "attr"
-                        yield Completion(
-                            attr,
-                            start_position=-len(prefix),
-                            display=_display(attr, prefix),
-                            display_meta=meta,
+
+                def attr_meta(attr: str) -> str:
+                    try:
+                        value = getattr(obj, attr)
+                        return (
+                            "method"
+                            if callable(value)
+                            else truncate(type(value).__name__, MAX_META_LEN)
                         )
+                    except Exception:
+                        return "attr"
+
+                yield from _completions(attrs, prefix, attr_meta)
                 return
 
         last_word = self._last_identifier(last_token)
@@ -415,21 +463,16 @@ class ShellCompleter(Completer):
         else:
             builtins_candidates = []
 
-        candidates = set(localspace.keys()) | set(builtins_candidates)
-        for name in sorted(candidates) + KEYWORDS:
+        candidates = sorted(set(localspace.keys()) | set(builtins_candidates))
+
+        def name_meta(name: str) -> str:
             if name in localspace:
-                meta = truncate(type(localspace[name]).__name__, MAX_META_LEN)
-            elif name in __builtins__:
-                meta = truncate(type(__builtins__[name]).__name__, MAX_META_LEN)
-            else:
-                meta = "python"
-            if name.startswith(last_word):
-                yield Completion(
-                    name,
-                    start_position=-len(last_word),
-                    display=_display(name, last_word),
-                    display_meta=meta
-                )
+                return truncate(type(localspace[name]).__name__, MAX_META_LEN)
+            if name in __builtins__:
+                return truncate(type(__builtins__[name]).__name__, MAX_META_LEN)
+            return "python"
+
+        yield from _completions(candidates + KEYWORDS, last_word, name_meta)
         yield from self._environment_completion(text)
 
     def _subcommand_completion(self, text: str):
@@ -453,61 +496,46 @@ class ShellCompleter(Completer):
             if sub_cmd.get(part):
                 sub_cmd = sub_cmd[part]
 
-        for name in sorted(sub_cmd.keys()):
-            if name == "_global" or name == "_flags": continue
-            if name in parts[:-1]: continue
-            if name.startswith(last_word):
-                yield Completion(
-                    name,
-                    start_position=-len(last_word),
-                    display=_display(name, last_word),
-                    display_meta="subcommand"
-                )
+        subcommands = [
+            name
+            for name in sorted(sub_cmd.keys())
+            if name not in ("_global", "_flags") and name not in parts[:-1]
+        ]
+        # A dash can only start a flag, so do not fuzzy-match subcommands that
+        # merely contain one: typing `git -` should list flags, not every
+        # hyphenated subcommand.
+        if not last_word.startswith("-"):
+            yield from _completions(subcommands, last_word, "subcommand")
 
         # not auto complete flags unless user types them
         if last_word == "": return
 
-        for name in sorted(sub_cmd.get("_flags") or set()):
-            if name in parts[:-1]: continue
-            if name.startswith(last_word):
-                yield Completion(
-                    name,
-                    start_position=-len(last_word),
-                    display=_display(name, last_word),
-                    display_meta="flag",
-                )
+        flags = [
+            name
+            for name in sorted(sub_cmd.get("_flags") or set())
+            if name not in parts[:-1]
+        ]
+        yield from _completions(flags, last_word, "flag")
 
-        for name in sorted(global_flags):
-            if name in parts[:-1]: continue
-            if name.startswith(last_word):
-                yield Completion(
-                    name,
-                    start_position=-len(last_word),
-                    display=_display(name, last_word),
-                    display_meta="flag",
-                )
+        global_flag_names = [
+            name for name in sorted(global_flags) if name not in parts[:-1]
+        ]
+        yield from _completions(global_flag_names, last_word, "flag")
+
+    def _module_completion(self, prefix: str):
+        modules = (m for m in sorted(_module_names()) if not m.startswith("_"))
+        yield from _completions(modules, prefix, "module")
 
     def _command_completion(self, text):
-        for cmd in self._get_commands():
-            if cmd in aliases: continue
-            if cmd.startswith(text):
-                meta = "command" if cmd in BUILTINS else "program"
-                yield Completion(
-                    cmd,
-                    start_position=-len(text),
-                    display=_display(cmd, text),
-                    display_meta=meta,
-                )
+        commands = (cmd for cmd in self._get_commands() if cmd not in aliases)
+
+        def command_meta(cmd: str) -> str:
+            return "command" if cmd in BUILTINS else "program"
+
+        yield from _completions(commands, text, command_meta)
 
     def _alias_completion(self, text):
-        for alias in aliases.keys():
-            if alias.startswith(text):
-                yield Completion(
-                    alias,
-                    start_position=-len(text),
-                    display=_display(alias, text),
-                    display_meta="alias",
-                )
+        yield from _completions(aliases.keys(), text, "alias")
 
     def _get_completions(self, document: Document, complete_event) -> Generator[Completion, None, None]:
         text = document.text_before_cursor
@@ -543,47 +571,17 @@ class ShellCompleter(Completer):
                 if not lstripped.endswith(parts[-1]):
                     parts.append("")
                 elif len(parts) == 2:
-                    mods = _module_names()
-                    for name in sorted(mods):
-                        if not name.startswith(parts[-1]):
-                            continue
-                        if name.startswith("_"):
-                            continue
-                        yield Completion(
-                            name,
-                            start_position=-len(parts[-1]),
-                            display=_display(name, parts[-1]),
-                            display_meta="module",
-                        )
+                    yield from self._module_completion(parts[-1])
                 elif len(parts) == 3:
-                    yield Completion(
-                        "import",
-                        start_position=-len(parts[-1]),
-                        display_meta="keyword",
-                    )
+                    yield from _completions(["import"], parts[-1], "keyword")
                 return
             if cmd == "import":
                 if not lstripped.endswith(parts[-1]):
                     parts.append("")
                 elif len(parts) == 2:
-                    mods = _module_names()
-                    for name in sorted(mods):
-                        if not name.startswith(parts[-1]):
-                            continue
-                        if name.startswith("_"):
-                            continue
-                        yield Completion(
-                            name,
-                            start_position=-len(parts[-1]),
-                            display=_display(name, parts[-1]),
-                            display_meta="module",
-                        )
+                    yield from self._module_completion(parts[-1])
                 elif len(parts) == 3:
-                    yield Completion(
-                        "as",
-                        start_position=-len(parts[-1]),
-                        display_meta="keyword",
-                    )
+                    yield from _completions(["as"], parts[-1], "keyword")
                 return
 
         yield from self._subcommand_completion(lstripped)
