@@ -8,11 +8,55 @@ import keyword
 from string import whitespace
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from prompt_toolkit.document import Document
+from prompt_toolkit.formatted_text import StyleAndTextTuples
 from .environment import localspace, aliases
 from .utils import truncate
 
 MAX_DISPLAY_LEN = 24
 MAX_META_LEN = 12
+
+
+def _display(name: str, matched: str, limit: int = MAX_DISPLAY_LEN) -> StyleAndTextTuples:
+    """Display `name` truncated to `limit`, with the matched part highlighted.
+
+    `matched` is the text that produced the completion. It normally sits at the
+    start of `name`, but fuzzy path matches can occur anywhere, so the visible
+    window slides to keep the match on screen (a leading ``...`` marks the
+    omitted prefix).
+    """
+    if not matched:
+        return [("", truncate(name, limit))]
+
+    start = name.lower().find(matched.lower())
+    if start < 0:
+        return [("", truncate(name, limit))]
+    end = start + len(matched)
+
+    # The window is normally the first `limit` characters. If the match falls
+    # past it, shift the window so the whole match stays visible.
+    span = max(limit, len(matched))
+    visible_start = 0 if end <= limit else end - span
+    visible_end = min(len(name), visible_start + span)
+    visible = name[visible_start:visible_end]
+
+    rel_start = start - visible_start
+    rel_end = rel_start + len(matched)
+
+    HIGHLIGHT_STYLE = "bold underline"
+    PLAIN_STYLE = ""
+
+    fragments: StyleAndTextTuples = []
+    if visible_start:
+        fragments.append((PLAIN_STYLE, "..."))
+    if rel_start:
+        fragments.append((PLAIN_STYLE, visible[:rel_start]))
+    fragments.append((HIGHLIGHT_STYLE, visible[rel_start:rel_end]))
+    if rel_end < len(visible):
+        fragments.append((PLAIN_STYLE, visible[rel_end:]))
+    if visible_end < len(name):
+        fragments.append((PLAIN_STYLE, "..."))
+    return fragments
+
 
 WIN_EXEC_EXTS = frozenset({".exe", ".bat", ".cmd", ".ps1", ".py", ".com"})
 NON_EXEC_SUFFIXES = (".dll", ".pyd", ".pyc", ".sys", ".msi", ".drv")
@@ -232,7 +276,7 @@ class ShellCompleter(Completer):
                 name = item
             yield Completion(
                 name,
-                display=truncate(item, MAX_DISPLAY_LEN),
+                display=_display(item, prefix),
                 start_position=-len(prefix),
                 display_meta="directory" if is_dir else "file",
             )
@@ -257,7 +301,7 @@ class ShellCompleter(Completer):
                 yield Completion(
                     name,
                     start_position=-len(last_word),
-                    display=truncate(name, MAX_DISPLAY_LEN),
+                    display=_display(name, last_word),
                     display_meta="environment"
                 )
 
@@ -354,7 +398,7 @@ class ShellCompleter(Completer):
                         yield Completion(
                             attr,
                             start_position=-len(prefix),
-                            display=attr,
+                            display=_display(attr, prefix),
                             display_meta=meta,
                         )
                 return
@@ -383,7 +427,7 @@ class ShellCompleter(Completer):
                 yield Completion(
                     name,
                     start_position=-len(last_word),
-                    display=name,
+                    display=_display(name, last_word),
                     display_meta=meta
                 )
         yield from self._environment_completion(text)
@@ -416,7 +460,7 @@ class ShellCompleter(Completer):
                 yield Completion(
                     name,
                     start_position=-len(last_word),
-                    display=truncate(name, MAX_DISPLAY_LEN),
+                    display=_display(name, last_word),
                     display_meta="subcommand"
                 )
 
@@ -429,7 +473,7 @@ class ShellCompleter(Completer):
                 yield Completion(
                     name,
                     start_position=-len(last_word),
-                    display=truncate(name, MAX_DISPLAY_LEN),
+                    display=_display(name, last_word),
                     display_meta="flag",
                 )
 
@@ -439,7 +483,7 @@ class ShellCompleter(Completer):
                 yield Completion(
                     name,
                     start_position=-len(last_word),
-                    display=truncate(name, MAX_DISPLAY_LEN),
+                    display=_display(name, last_word),
                     display_meta="flag",
                 )
 
@@ -451,7 +495,7 @@ class ShellCompleter(Completer):
                 yield Completion(
                     cmd,
                     start_position=-len(text),
-                    display=truncate(cmd, MAX_DISPLAY_LEN),
+                    display=_display(cmd, text),
                     display_meta=meta,
                 )
 
@@ -461,7 +505,7 @@ class ShellCompleter(Completer):
                 yield Completion(
                     alias,
                     start_position=-len(text),
-                    display=truncate(alias, MAX_DISPLAY_LEN),
+                    display=_display(alias, text),
                     display_meta="alias",
                 )
 
@@ -508,7 +552,7 @@ class ShellCompleter(Completer):
                         yield Completion(
                             name,
                             start_position=-len(parts[-1]),
-                            display=truncate(name, MAX_DISPLAY_LEN),
+                            display=_display(name, parts[-1]),
                             display_meta="module",
                         )
                 elif len(parts) == 3:
@@ -531,7 +575,7 @@ class ShellCompleter(Completer):
                         yield Completion(
                             name,
                             start_position=-len(parts[-1]),
-                            display=truncate(name, MAX_DISPLAY_LEN),
+                            display=_display(name, parts[-1]),
                             display_meta="module",
                         )
                 elif len(parts) == 3:
