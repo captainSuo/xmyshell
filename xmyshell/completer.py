@@ -42,7 +42,7 @@ def _display(name: str, matched: str, limit: int = MAX_DISPLAY_LEN) -> StyleAndT
     rel_start = start - visible_start
     rel_end = rel_start + len(matched)
 
-    HIGHLIGHT_STYLE = "class:completion-highlight"
+    HIGHLIGHT_STYLE = "bold underline"
     PLAIN_STYLE = ""
 
     fragments: StyleAndTextTuples = []
@@ -501,11 +501,7 @@ class ShellCompleter(Completer):
             for name in sorted(sub_cmd.keys())
             if name not in ("_global", "_flags") and name not in parts[:-1]
         ]
-        # A dash can only start a flag, so do not fuzzy-match subcommands that
-        # merely contain one: typing `git -` should list flags, not every
-        # hyphenated subcommand.
-        if not last_word.startswith("-"):
-            yield from _completions(subcommands, last_word, "subcommand")
+        yield from _completions(subcommands, last_word, "subcommand")
 
         # not auto complete flags unless user types them
         if last_word == "": return
@@ -521,10 +517,6 @@ class ShellCompleter(Completer):
             name for name in sorted(global_flags) if name not in parts[:-1]
         ]
         yield from _completions(global_flag_names, last_word, "flag")
-
-    def _module_completion(self, prefix: str):
-        modules = (m for m in sorted(_module_names()) if not m.startswith("_"))
-        yield from _completions(modules, prefix, "module")
 
     def _command_completion(self, text):
         commands = (cmd for cmd in self._get_commands() if cmd not in aliases)
@@ -571,7 +563,8 @@ class ShellCompleter(Completer):
                 if not lstripped.endswith(parts[-1]):
                     parts.append("")
                 elif len(parts) == 2:
-                    yield from self._module_completion(parts[-1])
+                    mods = (m for m in sorted(_module_names()) if not m.startswith("_"))
+                    yield from _completions(mods, parts[-1], "module")
                 elif len(parts) == 3:
                     yield from _completions(["import"], parts[-1], "keyword")
                 return
@@ -579,7 +572,8 @@ class ShellCompleter(Completer):
                 if not lstripped.endswith(parts[-1]):
                     parts.append("")
                 elif len(parts) == 2:
-                    yield from self._module_completion(parts[-1])
+                    mods = (m for m in sorted(_module_names()) if not m.startswith("_"))
+                    yield from _completions(mods, parts[-1], "module")
                 elif len(parts) == 3:
                     yield from _completions(["as"], parts[-1], "keyword")
                 return
