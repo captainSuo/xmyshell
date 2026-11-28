@@ -111,6 +111,10 @@ or
 - Lists, tuples, generators, etc. will be expanded into shell arguments.
 E.g. `{["arg1", "arg2 xxx"]}` will be expanded into `arg1 'arg2 xxx'`
 
+- Completion inside `{}` is Python completion. Only the text after the unclosed
+`{` is used, so quoting or arguments before it (`echo "{foo.bar`) do not get in
+the way: names, attributes and keywords are completed from the namespace.
+
 Here is an example (though there are other ways to do this, it is just an example )
 ```bash
 ❯ pip install {cat("requirements.txt").splitlines()}

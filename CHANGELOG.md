@@ -1,6 +1,15 @@
 # Change Log
 
 
+## [Unreleased]
+### Fixed
+- Python completion inside `{}` now receives only the expression after the
+  unclosed `{` instead of the whole command line. Typing `echo "{foo.` (quoted
+  argument), `pip install {cat("req` or any command name before the brace no
+  longer sends the completer down the shell-string/path branch, which returned
+  nothing.
+
+
 ## [0.2.28] 2026-11-22
 ### Improved
 - Every completer now supports the same fuzzy matching as path completion:

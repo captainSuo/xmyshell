@@ -232,20 +232,28 @@ class ShellCompleter(Completer):
             return os.path.splitext(name)[1] in WIN_EXEC_EXTS
         return not name.endswith(POSIX_NON_EXEC_SUFFIXES)
 
-    def _inside_braces(self, text: str) -> bool:
+    def _braces_content(self, text: str) -> str | None:
+        """Inner text of the innermost unclosed `{`, or None when not in one.
+
+        Only the brace content is relevant for python completion; everything
+        before the `{` (command, quotes, other args) would otherwise be parsed
+        by the python completer as if it were part of the expression.
+        """
         count = 0
+        start = 0
         i = 0
         while i < len(text):
             ch = text[i]
             if ch == '{' and (i == 0 or text[i-1] != '{'):
                 count += 1
+                start = i + 1
                 i += 1
             elif ch == '}' and (i == 0 or text[i-1] != '}'):
                 count -= 1
                 i += 1
             else:
                 i += 1
-        return count > 0
+        return text[start:] if count > 0 else None
 
     def _sort_commands(self, commands: set[str]) -> list[str]:
         builtins = [c for c in BUILTINS if c in commands]
@@ -538,8 +546,9 @@ class ShellCompleter(Completer):
         if lstripped.startswith("sudo"):
             lstripped = lstripped[4:].lstrip()
 
-        if self._inside_braces(lstripped):
-            yield from self._python_completion(lstripped)
+        brace_text = self._braces_content(lstripped)
+        if brace_text is not None:
+            yield from self._python_completion(brace_text)
             return
 
         if " " not in lstripped:
